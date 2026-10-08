@@ -1,6 +1,6 @@
 // Modo sin conexión: guarda la app y las tipografías la primera vez que se abre.
-const CACHE = 'fichas-v1';
-const CORE = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
+const CACHE = 'fichas-v2';
+const CORE = ['./', './index.html', './acido-base.html', './equilibrio.html', './estudio.css', './estudio.js', './ab-data.js', './eq-data.js', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -19,8 +19,16 @@ self.addEventListener('fetch', e => {
   // La página: primero la red (para recibir actualizaciones), si no hay conexión, la copia guardada.
   if (req.mode === 'navigate') {
     e.respondWith(fetch(req)
-      .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); return res; })
-      .catch(() => caches.match('./index.html')));
+      .then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); return res; })
+      .catch(() => caches.match(req, {ignoreSearch: true}).then(hit => hit || caches.match('./index.html'))));
+    return;
+  }
+  // Scripts y estilos propios: la copia guardada al instante y se actualiza en segundo plano.
+  if (url.origin === location.origin && /\.(js|css)$/.test(url.pathname)) {
+    e.respondWith(caches.match(req).then(hit => {
+      const net = fetch(req).then(res => { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); return res; }).catch(() => hit);
+      return hit || net;
+    }));
     return;
   }
   // Tipografías e iconos: primero la copia guardada.

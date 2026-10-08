@@ -1,0 +1,90 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png"><meta name="theme-color" content="#0E6C76"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Ácido-base"><title>Ácido-base · Fichas de Química</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="estudio.css">
+<style>[hidden]{display:none!important}body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head><body>
+<div class="app" id="app"></div>
+<script src="estudio.js"></script>
+<script src="ab-data.js"></script>
+<script>
+const E=Estudio, $=E.$;
+const store=E.makeStore('estudio-ab-v1',{prog:{},decks:null,tab:'fichas'});
+const flash=E.flash({store,cards:AB.cards(),decks:AB.DECKS});
+const test=E.quiz({title:'Test',build:()=>AB.testQs(10)});
+const phq=E.quiz({title:'Cálculo de pH',build:()=>AB.phQs(8),
+  extra:()=>'<p class="muted">Cada problema se resuelve con el mismo esquema: ¿fuerte o débil? → ¿qué especie aporta H₃O⁺ u OH⁻? → concentración → pH.</p>'});
+
+const TABS=[['fichas','Fichas'],['test','Test'],['ph','Calcular pH'],['teoria','Teoría']];
+let tab=store.st.tab||'fichas';
+if(/^#(fichas|test|ph|teoria)$/.test(location.hash)) tab=location.hash.slice(1);
+
+const h=E.header({tile:'pH',sym:'H⁺',title:'Ácido-base',sub:'Fuertes, débiles y conjugados',current:'ab'});
+$('#app').innerHTML=`${h}
+  <nav class="tabs" role="tablist" id="tabs">${TABS.map(([k,n])=>`<button role="tab" data-a="tab" data-v="${k}">${n}</button>`).join('')}</nav>
+  <main id="view"></main>`;
+
+function teoria(){
+  const L=(t,b)=>`<section class="panel lesson"><h2>${t}</h2>${b}</section>`;
+  return `<div class="rules">
+  ${L('1. Qué es un ácido y qué es una base',E.rich(`
+    <p><b>Arrhenius</b>: ácido = libera {H^+} en agua; base = libera {OH^-}. Sirve solo para disoluciones acuosas y deja fuera al {NH3}.</p>
+    <p><b>Brønsted–Lowry</b> (el que usarás): ácido = <b>cede</b> un {H^+}; base = <b>acepta</b> un {H^+}. Siempre hay dos: uno cede y otro recibe.</p>
+    <div class="eqbox">{HA} + {H2O} ⇌ {A^-} + {H3O^+}<small>HA cede H⁺ al agua (que actúa como base)</small></div>`))}
+  ${L('2. Pares conjugados',E.rich(`
+    <p>Al ceder un H⁺, el ácido se convierte en su <b>base conjugada</b>; al aceptarlo, la base pasa a su <b>ácido conjugado</b>. Los dos miembros de un par se diferencian en un único {H^+}.</p>
+    <div class="eqbox">{NH4^+} ⇄ {NH3} + {H^+}<small>ácido → base conjugada (la carga baja 1)</small></div>
+    <div class="callout" style="--cc:var(--c-cj)"><b class="t">Truco</b>Para escribir la conjugada solo cuentas protones: ácido → quita uno; base → añade uno. Si la carga o los H no cuadran, no es una pareja.</div>`))}
+  ${L('3. Fuerte frente a débil',E.rich(`
+    <p><b>Fuerte</b>: se ioniza (o se disocia) al ~100 %. <b>Débil</b>: ionización parcial, equilibrio ⇌ con una constante pequeña ({K_a} o {K_b}). Es una propiedad de la sustancia, no de cuánto hay disuelto.</p>
+    <div class="callout" style="--cc:var(--c-ad)"><b class="t">Error clásico</b>Fuerte ≠ concentrado. Un ácido débil concentrado puede dar más H₃O⁺ que un fuerte muy diluido.</div>
+    <p><b>Para memorizar</b> (los pocos fuertes; el resto de ácidos habituales son débiles):</p>
+    <ul><li><span style="color:var(--c-af)"><b>Ácidos fuertes</b></span>: {HCl}, {HBr}, {HI}, {HNO3}, {H2SO4} (solo el 1.er H), {HClO4}.</li>
+    <li><span style="color:var(--c-bf)"><b>Bases fuertes</b></span>: hidróxidos del grupo 1 ({LiOH}, {NaOH}, {KOH}, {RbOH}, {CsOH}) y {Ca(OH)2}, {Sr(OH)2}, {Ba(OH)2}.</li></ul>
+    <p class="muted">Débiles típicos: {HF}, {CH3COOH}, {HCN}, {H2CO3}, {H3PO4}, {NH3} y las aminas.</p>`))}
+  ${L('4. Fuerza de los conjugados: se invierte',E.rich(`
+    <p>{K_a}·{K_b} = {K_w} = 1,0×10^-14 (25 °C), o pK_a + pK_b = 14.</p>
+    <table><thead><tr><th>Si el ácido es…</th><th>su base conjugada es…</th><th>y su sal con Na⁺ da…</th></tr></thead><tbody>
+    <tr><td>fuerte ({HCl})</td><td>despreciable ({Cl^-})</td><td>pH neutro</td></tr>
+    <tr><td>débil ({CH3COOH})</td><td>débil ({CH3COO^-})</td><td>pH básico</td></tr>
+    <tr><td>muy débil ({HCN})</td><td>más fuerte entre las débiles ({CN^-})</td><td>pH más básico</td></tr></tbody></table>
+    <div class="callout" style="--cc:var(--c-cj)"><b class="t">Idea</b>«Cuanto más fuerte el ácido, más débil su conjugada» y viceversa. No existen dos fuertes emparejados.</div>`))}
+  ${L('5. Agua, pH y pOH',E.rich(`
+    <div class="eqbox">2 {H2O} ⇌ {H3O^+} + {OH^-} · {K_w} = [{H3O^+}][{OH^-}] = 1,0×10^-14</div>
+    <ul><li>pH = −log[{H3O^+}] · pOH = −log[{OH^-}] · <b>pH + pOH = 14</b>.</li>
+    <li>Ácida: pH &lt; 7 · neutra: pH = 7 · básica: pH &gt; 7.</li>
+    <li>Un punto de pH = un factor 10 en concentración.</li></ul>`))}
+  ${L('6. Cómo calcular el pH según el caso',E.rich(`
+    <ol><li><b>Ácido fuerte</b> (c): [{H3O^+}] = c → pH = −log c.</li>
+    <li><b>Base fuerte</b> (c): [{OH^-}] = c (o 2c si es {Ba(OH)2}…) → pOH → pH = 14 − pOH.</li>
+    <li><b>Ácido débil</b> (c, {K_a}): x ≈ √({K_a}·c) → pH = −log x. Comprueba x/c &lt; 5 %; si no, cuadrática.</li>
+    <li><b>Base débil</b> (c, {K_b}): x = [{OH^-}] ≈ √({K_b}·c) → pOH → pH.</li>
+    <li><b>Sal de ácido débil</b> (p. ej. {CH3COONa}): usa la base conjugada, {K_b} = {K_w}/{K_a}, como en el punto 4.</li></ol>`))}
+  ${L('7. ¿Una sal es ácida, neutra o básica?',E.rich(`
+    <p>Separa la sal en catión y anión y pregunta de qué ácido o base viene cada uno:</p>
+    <table><thead><tr><th>Catión de…</th><th>Anión de…</th><th>Disolución</th></tr></thead><tbody>
+    <tr><td>base fuerte ({Na^+})</td><td>ácido fuerte ({Cl^-})</td><td><b>neutra</b></td></tr>
+    <tr><td>base fuerte ({Na^+})</td><td>ácido débil ({CH3COO^-})</td><td><b>básica</b></td></tr>
+    <tr><td>base débil ({NH4^+})</td><td>ácido fuerte ({Cl^-})</td><td><b>ácida</b></td></tr>
+    <tr><td>base débil</td><td>ácido débil</td><td>depende: compara {K_a} del catión y {K_b} del anión</td></tr></tbody></table>`))}
+  ${L('8. Anfóteros',E.rich(`
+    <p>Un anfótero puede ser ácido o base según el compañero: {H2O}, {HCO3^-}, {H2PO4^-}, {HS^-}. Un {HCO3^-} en agua: {K_a} = 4,7×10^-11 (ácido, muy débil) frente a {K_b} = 2,3×10^-8 (base); gana la base, así que el bicarbonato da pH ligeramente básico.</p>`))}
+  ${E.resetBlock()}</div>`;
+}
+
+function render(){
+  document.querySelectorAll('#tabs [data-v]').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===tab));
+  const v=$('#view');
+  if(tab==='fichas') flash.render(v);
+  else if(tab==='test') test.render(v);
+  else if(tab==='ph') phq.render(v);
+  else { E.keys(null); v.innerHTML=teoria(); }
+  const p=AB.cards().length;
+  $('#subtitle').textContent=`${p} fichas · fuertes, débiles y conjugados`;
+}
+E.act('tab',v=>{ tab=v; store.st.tab=v; store.save(); render(); });
+E.wireReset(store,()=>location.reload());
+render();
+if('serviceWorker' in navigator && location.protocol==='https:'){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+</script>
+</body></html>
