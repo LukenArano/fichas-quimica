@@ -1,0 +1,149 @@
+<!doctype html><html lang="eu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png"><meta name="theme-color" content="#0E6C76"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Kimika"><title>Azterketak · Kimika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="estudio.css">
+<style>[hidden]{display:none!important}body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.exlist{display:flex; flex-direction:column; gap:10px}
+.exrow{display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:var(--surface); text-align:left; width:100%}
+.exrow:hover{border-color:var(--accent)}
+.exrow h3{margin:0; font-family:var(--font-display); font-size:17px}
+.chips{display:flex; gap:5px; flex-wrap:wrap; margin-top:6px}
+.tchip{font-family:var(--font-mono); font-size:11px; border-radius:99px; padding:1px 8px; border:1px solid var(--cc); color:var(--cc)}
+.st{font-family:var(--font-mono); font-size:12px; white-space:nowrap}
+.st.ok{color:var(--ok)} .st.disc{color:var(--bad)} .st.amb{color:var(--warn)} .st.pend{color:var(--ink-3)}
+.timer{font-family:var(--font-display); font-size:30px; font-weight:700; text-align:center}
+</style>
+</head><body>
+<div class="app" id="app"></div>
+<script src="estudio.js"></script>
+<script src="kimika.js"></script>
+<script src="az-data.js"></script>
+<script src="az-sol.js"></script>
+<script src="zuzenketak.js"></script>
+<script>
+(function(){
+const E=Estudio, K=Kimika, L=E.L, b=E.b, $=E.$, R=E.rich;
+const DATA=window.AZ_DATA||[], SOL=window.AZ_SOL||{}, ZZ=window.ZUZENKETAK||[];
+const hub=K.hub; hub.st.az=hub.st.az||{}; hub.st.sim=hub.st.sim||null;
+const TX={
+  title:b('Sala de exámenes','Azterketa-gela'), sub:b('Exámenes 2019-2025: enunciados, resultados verificados y resoluciones','2019-2025 azterketak: enuntziatuak, emaitza egiaztatuak eta ebazpenak'),
+  tabs:[['list',b('Exámenes','Azterketak')],['sim',b('Simulacro','Simulakroa')],['fix',b('Correcciones','Zuzenketak')]],
+  o:b('ordinaria','ohikoa'), e:b('extraordinaria','ez-ohikoa'), missing:b('enunciado no disponible: solo resultados','enuntziatua ez dago eskuragarri: emaitzak bakarrik'),
+  orig:b('Original (euskera)','Jatorrizkoa (euskara)'), trad:b('Traducción (castellano)','Itzulpena (gaztelania)'),
+  showSol:b('Ver resolución paso a paso','Ebazpena urratsez urrats ikusi'), next:b('Siguiente paso','Hurrengo urratsa'), all:b('Ver todo','Dena ikusi'),
+  official:b('Resultado oficial','Emaitza ofiziala'), showOff:b('Ver resultado oficial','Emaitza ofiziala ikusi'), ourRes:b('Resultado verificado','Egiaztatutako emaitza'),
+  pend:b('Resolución completa: se añadirá con el tema correspondiente. Mientras, intenta resolverlo y compara con el resultado oficial.','Ebazpen osoa: dagokion gaiarekin gehituko da. Bitartean, saiatu ebazten eta alderatu emaitza ofizialarekin.'),
+  st:{ok:b('✓ verificado','✓ egiaztatuta'),disc:b('⚠ discrepancia','⚠ desadostasuna'),amb:b('? ambiguo','? anbiguoa'),pend:b('… pendiente','… egiteke')},
+  mark:b('Lo he resuelto','Ebatzi dut'), marked:b('Resuelto ✓','Ebatzita ✓'), back:b('← Todos los exámenes','← Azterketa guztiak'),
+  intro:b('Lee primero el enunciado <b>en euskera</b>, como en el examen; la traducción está debajo por si la necesitas. Intenta resolverlo en papel antes de abrir la resolución. Los resultados oficiales se han verificado: si no coinciden, se explica por qué.','Irakurri lehenik enuntziatua <b>euskaraz</b>, azterketan bezala; itzulpena azpian duzu behar baduzu. Saiatu paperean ebazten ebazpena ireki aurretik. Emaitza ofizialak egiaztatu dira: bat ez badatoz, zergatik azaltzen da.'),
+  ex:b('Ejercicio','Ariketa'), pts:b('puntos','puntu'), dur:b('Duración','Iraupena'),
+  simIntro:b('Simulacro con la estructura habitual desde 2022-23: <b>un problema de equilibrio gaseoso + uno de equilibrio iónico (ácido-base/precipitación) + uno de electroquímica o L-V</b>. 3 h 30 min. Se eligen ejercicios que aún no has marcado como resueltos.','2022-23tik ohikoa den egiturako simulakroa: <b>gas-oreka problema bat + oreka ioniko bat (azido-base/hauspeatzea) + elektrokimika edo L-V bat</b>. 3 h 30 min. Oraindik ebatzitzat markatu ez dituzun ariketak aukeratzen dira.'),
+  simNew:b('Nuevo simulacro','Simulakro berria'), simStart:b('Empezar cronómetro','Kronometroa abiarazi'), simStop:b('Terminar','Amaitu'), simLeft:b('tiempo restante','geratzen den denbora'),
+  fixIntro:b('Errores y ambigüedades detectados al contrastar apuntes, exámenes y soluciones con el conocimiento científico. «Orig.» = el error está en la diapositiva original en euskera; «trad.» = solo en la traducción.','Apunteak, azterketak eta ebazpenak ezagutza zientifikoarekin alderatzean aurkitutako akatsak eta anbiguotasunak. «Orig.» = akatsa jatorrizko euskarazko diapositiban dago; «trad.» = itzulpenean bakarrik.'),
+};
+const TOPCOL=Object.fromEntries(K.TOPICS.map(t=>[t.id,t.col]));
+const esc=s=>E.esc(String(s||'')).replace(/\*\(([^)]*)\)\*/g,'<i>($1)</i>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+/* une las líneas cortadas del PDF; respeta los saltos antes de apartados (a), b), •, -, Datuak…) y las líneas en blanco */
+const reflow=t=>{ const out=[]; String(t||'').split('\n').forEach(raw=>{ const l=raw.trim();
+  if(!l){ out.push(''); return; }
+  const isNew=/^([a-zA-Z]\)|[0-9]+[.)]|[•\-–]|\*|\(|Datu|DATU|Dato|DATO|NOMBRE|IZENA|\||[A-Z]\.|Erantzun|Responde|Kalkul|Calcul)/.test(l);
+  if(!out.length||out[out.length-1]===''||isNew) out.push(l); else out[out.length-1]+=' '+l; });
+  return out.join('\n').replace(/\n{3,}/g,'\n\n'); };
+let tab='list', cur=null;
+const h=location.hash.slice(1);
+if(h==='zuzenketak') tab='fix'; else if(h==='sim') tab='sim';
+else if(h){ const m=h.match(/^(\d{4}-\d{2}-[oe])(?:-(\d+))?$/); if(m){ cur={id:m[1],n:m[2]?+m[2]:null}; } }
+const exName=e=>`${e.year} · ${L(TX[e.kind])}`;
+const chips=ids=>(ids||[]).map(id=>{ const t=K.byId(id); return t?`<span class="tchip" style="--cc:var(--c-${t.col})">${L(t.title)}</span>`:''; }).join('');
+
+function hdr(){
+  $('#hdr').innerHTML=E.header({tile:'AZ',sym:'✎',title:TX.title,sub:TX.sub,current:'az'});
+  $('#tabs').innerHTML=TX.tabs.map(([k,n])=>`<button role="tab" data-a="az:tab" data-v="${k}" aria-selected="${k===tab}">${L(n)}</button>`).join('');
+}
+function list(){
+  const v=$('#view');
+  v.innerHTML=`<div class="rules"><section class="panel"><p class="muted" style="margin:0">${L(TX.intro)}</p></section>
+   ${DATA.map(e=>{ const done=e.ex.filter(x=>hub.st.az[e.id+'-'+x.n]).length;
+     return `<button class="exrow" data-a="az:open" data-v="${e.id}"><span><h3>${exName(e)}</h3><span class="count">${e.date?e.date+' · ':''}${e.ex.length} ${L(TX.ex).toLowerCase()}${e.missing?' · '+L(TX.missing):''}</span>
+       <span class="chips">${[...new Set(e.ex.flatMap(x=>(SOL[e.id+'-'+x.n]||{}).topics||[]))].map(id=>chips([id])).join('')}</span></span>
+       <span class="count">${done}/${e.ex.length} ✓</span></button>`; }).join('')}</div>`;
+}
+function exHtml(e,x,opts={}){
+  const key=e.id+'-'+x.n, s=SOL[key]||{}, st=s.status||'pend', done=!!hub.st.az[key];
+  const stepsId='st-'+key;
+  return `<section class="panel" id="x-${key}">
+    <div class="xhead"><span class="xid">${L(TX.ex)} ${x.n}</span>${x.pts?`<span class="count">${E.esc(x.pts)}</span>`:''}<span class="st ${st}">${L(TX.st[st])}</span></div>
+    <div class="chips">${chips(s.topics)}</div>
+    ${x.eu?`<div><b class="count">${L(TX.orig)}</b><div class="azq" lang="eu">${esc(reflow(x.eu))}</div></div>
+      <details ${E.lang()==='es'?'open':''}><summary class="count">${L(TX.trad)}</summary><div class="azq" lang="es" style="margin-top:6px">${esc(reflow(x.es))}</div></details>`:`<p class="muted">${L(TX.missing)}</p>`}
+    ${s.steps?`<div class="worked" id="${stepsId}"><ol class="wsteps">${s.steps.map(t=>`<li hidden>${R(t)}</li>`).join('')}</ol>
+        ${s.res?`<div class="wres" hidden><b>${L(TX.ourRes)}:</b> ${R(s.res)}</div>`:''}
+        <div class="row wbtns"><button class="primary" data-a="az:step" data-v="${stepsId}">${L(TX.showSol)}</button><button class="ghost" data-a="az:all" data-v="${stepsId}">${L(TX.all)}</button></div></div>`
+      :`<div class="callout c-note"><b class="t">${L(TX.st.pend)}</b>${L(TX.pend)}</div>`}
+    ${s.note?`<div class="callout ${st==='disc'?'c-fix':st==='amb'?'c-warn':'c-note'}"><b class="t">${L(st==='disc'?TX.st.disc:st==='amb'?TX.st.amb:b('Nota','Oharra'))}</b>${R(s.note)}</div>`:''}
+    ${x.off?`<details><summary class="count">${L(TX.showOff)}</summary><div class="official" style="margin-top:6px"><div lang="eu" style="white-space:pre-wrap">${esc(x.off.eu)}</div><div lang="es" class="muted" style="white-space:pre-wrap;margin-top:6px">${esc(x.off.es)}</div></div></details>`:''}
+    ${opts.nomark?'':`<div class="row"><button class="${done?'ghost':'primary'}" data-a="az:mark" data-v="${key}">${L(done?TX.marked:TX.mark)}</button></div>`}
+  </section>`;
+}
+function exam(){
+  const e=DATA.find(x=>x.id===cur.id); if(!e){ cur=null; return list(); }
+  const v=$('#view');
+  v.innerHTML=`<div class="rules"><div class="bar"><button class="ghost" data-a="az:back" style="min-height:40px;padding:8px 14px">${L(TX.back)}</button><span class="count">${e.date?e.date+' · ':''}${e.dur?L(TX.dur)+': '+E.esc(e.dur):''}</span></div>
+    <section class="panel"><h2 style="margin:0">${exName(e)}</h2></section>${e.ex.map(x=>exHtml(e,x)).join('')}</div>`;
+  if(cur.n){ const el=document.getElementById('x-'+cur.id+'-'+cur.n); if(el) setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),50); }
+}
+/* ---- simulacro ---- */
+let timer=null;
+function newSim(){
+  const pool=DATA.filter(e=>!e.missing&&!/2019-20-e/.test(e.id)).flatMap(e=>e.ex.map(x=>({e,x,key:e.id+'-'+x.n,t:(SOL[e.id+'-'+x.n]||{}).topics||[]})));
+  const fresh=p=>!hub.st.az[p.key];
+  const pickFrom=f=>{ const c=pool.filter(f); const nf=c.filter(fresh); return E.pick(nf.length?nf:c); };
+  const a=pickFrom(p=>p.t[0]==='oreka'), bq=pickFrom(p=>['azidobase','hauspeatzea'].includes(p.t[0])), c=pickFrom(p=>['pilak','elektrolisia','lv'].includes(p.t[0]));
+  hub.st.sim={keys:[a,bq,c].filter(Boolean).map(p=>p.key),start:null}; hub.save();
+}
+function sim(){
+  const v=$('#view');
+  if(!hub.st.sim) newSim();
+  const S=hub.st.sim, items=S.keys.map(k=>{ const m=k.match(/^(\d{4}-\d{2}-[oe])-(\d+)$/); const e=DATA.find(x=>x.id===m[1]); return {e,x:e.ex.find(y=>y.n===+m[2])}; });
+  v.innerHTML=`<div class="rules"><section class="panel"><p class="muted" style="margin:0">${L(TX.simIntro)}</p>
+    <div class="timer" id="timer">3:30:00</div><span class="count" style="text-align:center">${L(TX.simLeft)}</span>
+    <div class="row" style="justify-content:center"><button class="primary" data-a="az:simgo">${L(S.start?TX.simStop:TX.simStart)}</button><button class="ghost" data-a="az:simnew">${L(TX.simNew)}</button></div></section>
+    ${items.map(({e,x},i)=>`<section class="panel"><h3 style="margin:0">${i+1}. ${exName(e)} · ${L(TX.ex)} ${x.n}</h3></section>${exHtml(e,x)}`).join('')}</div>`;
+  tick();
+}
+function tick(){
+  clearInterval(timer); const S=hub.st.sim; const el=$('#timer'); if(!el||!S) return;
+  const upd=()=>{ const left=S.start?Math.max(0,3.5*3600e3-(Date.now()-S.start)):3.5*3600e3; const t=Math.round(left/1000);
+    el.textContent=`${Math.floor(t/3600)}:${String(Math.floor(t%3600/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`; };
+  upd(); if(S.start) timer=setInterval(upd,1000);
+}
+/* ---- correcciones ---- */
+function fixes(){
+  const v=$('#view'); const groups={};
+  ZZ.forEach(z=>{ (groups[z.topic]=groups[z.topic]||[]).push(z); });
+  v.innerHTML=`<div class="rules"><section class="panel"><p class="muted" style="margin:0">${L(TX.fixIntro)}</p></section>
+    ${Object.entries(groups).map(([tid,arr])=>{ const t=K.byId(tid);
+      return `<section class="panel lesson"><h2 style="margin:0">${t?L(t.title):L(b('Exámenes y soluciones','Azterketak eta ebazpenak'))}</h2>
+        ${arr.map(z=>`<div class="callout ${z.sev==='hi'?'c-fix':z.sev==='mid'?'c-warn':'c-note'}"><b class="t">${E.esc(z.where)} · ${L(z.type)}</b><div>${R(z.wrong)}</div><div style="margin-top:6px">→ ${R(z.right)}</div></div>`).join('')}</section>`; }).join('')}</div>`;
+}
+/* ---- control ---- */
+$('#app').innerHTML=`<div id="hdr"></div><nav class="tabs" role="tablist" id="tabs"></nav><main id="view"></main>`;
+function render(){ hdr(); clearInterval(timer);
+  if(tab==='list'){ if(cur) exam(); else list(); } else if(tab==='sim') sim(); else fixes(); }
+E.act('az:tab',v=>{ tab=v; cur=null; history.replaceState(null,'',location.pathname+(v==='fix'?'#zuzenketak':v==='sim'?'#sim':'')); render(); window.scrollTo(0,0); });
+E.act('az:open',id=>{ cur={id,n:null}; history.replaceState(null,'','#'+id); render(); window.scrollTo(0,0); });
+E.act('az:back',()=>{ cur=null; history.replaceState(null,'',location.pathname); render(); });
+E.act('az:step',id=>{ const w=document.getElementById(id); if(!w) return; const hid=w.querySelector('.wsteps li[hidden]'); if(hid){ hid.hidden=false; hid.classList.add('appear'); }
+  const bt=w.querySelector('[data-a="az:step"]'); if(bt) bt.textContent=L(TX.next);
+  if(!w.querySelector('.wsteps li[hidden]')){ w.querySelectorAll('.wres').forEach(x=>x.hidden=false); const r=w.querySelector('.wbtns'); if(r) r.remove(); } });
+E.act('az:all',id=>{ const w=document.getElementById(id); if(!w) return; w.querySelectorAll('[hidden]').forEach(x=>x.hidden=false); const r=w.querySelector('.wbtns'); if(r) r.remove(); });
+E.act('az:mark',k=>{ hub.st.az[k]=!hub.st.az[k]; hub.save(); const sc=window.scrollY; render(); window.scrollTo(0,sc); });
+E.act('az:simnew',()=>{ newSim(); render(); });
+E.act('az:simgo',()=>{ const S=hub.st.sim; S.start=S.start?null:Date.now(); hub.save(); render(); });
+E.onLang(()=>{ const sc=window.scrollY; render(); window.scrollTo(0,sc); });
+addEventListener('hashchange',()=>{ const h=location.hash.slice(1); if(h==='zuzenketak'){ tab='fix'; cur=null; } else if(h==='sim'){ tab='sim'; cur=null; } else { const m=h.match(/^(\d{4}-\d{2}-[oe])(?:-(\d+))?$/); tab='list'; cur=m?{id:m[1],n:m[2]?+m[2]:null}:null; } render(); });
+render();
+if('serviceWorker' in navigator && location.protocol==='https:'){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+})();
+</script>
+</body></html>

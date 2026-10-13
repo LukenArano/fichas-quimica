@@ -1,7 +1,7 @@
 {
-  "name": "Fichas de Formulación",
-  "short_name": "Formulación",
-  "description": "Fichas de formulación química con repaso espaciado.",
+  "name": "Kimika · Química",
+  "short_name": "Kimika",
+  "description": "Química bilingüe (castellano/euskera): ruta de aprendizaje, laboratorios, ejercicios y exámenes resueltos.",
   "lang": "es",
   "start_url": "./",
   "scope": "./",

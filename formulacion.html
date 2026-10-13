@@ -1,0 +1,961 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png"><meta name="theme-color" content="#0E6C76"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Formulación"><meta name="apple-mobile-web-app-status-bar-style" content="default"><style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style></head><body>
+<title>Fichas de Formulación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: una columna de estudio (máx. 880px) con pestañas arriba; la ficha ocupa el centro, los colores de categoría siguen la lógica del papel tornasol (básico azul, ácido rojo). */
+:root{
+  --bg:#ECF0F2; --surface:#FFFFFF; --surface-2:#F5F7F8; --ink:#13202A; --ink-2:#4B5B67; --ink-3:#73828D;
+  --line:#D3DBE0; --accent:#0E6C76; --accent-ink:#FFFFFF;
+  --ok:#1F7F47; --warn:#A86A12; --bad:#BE3A32;
+  --font-display:"Lexend", "Segoe UI", system-ui, sans-serif;
+  --font-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  /* categorías */
+  --c-oxb:#2D60C6; --c-oxa:#C4362C; --c-oxanf:#7A4ED3; --c-oxn:#66717C; --c-per:#B87300;
+  --c-hid:#0B7BA3; --c-hidr:#875729; --c-bin:#875729; --c-oxac:#AD1F4E; --c-hidac:#CC4F14;
+  --c-oxs:#1C7F45; --c-sac:#567F16; --c-salb:#0C8174; --c-elem:#3B4855; --c-cat:#A11D99; --c-an:#A11D99; --c-org:#857400;
+  --shadow:0 1px 2px rgba(19,32,42,.06), 0 8px 24px rgba(19,32,42,.08);
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E151A; --surface:#162028; --surface-2:#1C2831; --ink:#E5ECF0; --ink-2:#A1B0BA; --ink-3:#7D8D98;
+    --line:#2A3944; --accent:#4CBFC8; --accent-ink:#06232A;
+    --ok:#4EC27F; --warn:#E2A944; --bad:#F2766B;
+    --c-oxb:#80A7F3; --c-oxa:#F2806F; --c-oxanf:#B69CF6; --c-oxn:#A5B0BA; --c-per:#EFB54E;
+    --c-hid:#5CC2E6; --c-hidr:#D6A576; --c-bin:#D6A576; --c-oxac:#F27BA0; --c-hidac:#F59C6C;
+    --c-oxs:#6BD399; --c-sac:#AAD66B; --c-salb:#5ED3C3; --c-elem:#C3CED8; --c-cat:#E78CE0; --c-an:#E78CE0; --c-org:#DCCB5E;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E151A; --surface:#162028; --surface-2:#1C2831; --ink:#E5ECF0; --ink-2:#A1B0BA; --ink-3:#7D8D98;
+  --line:#2A3944; --accent:#4CBFC8; --accent-ink:#06232A;
+  --ok:#4EC27F; --warn:#E2A944; --bad:#F2766B;
+  --c-oxb:#80A7F3; --c-oxa:#F2806F; --c-oxanf:#B69CF6; --c-oxn:#A5B0BA; --c-per:#EFB54E;
+  --c-hid:#5CC2E6; --c-hidr:#D6A576; --c-bin:#D6A576; --c-oxac:#F27BA0; --c-hidac:#F59C6C;
+  --c-oxs:#6BD399; --c-sac:#AAD66B; --c-salb:#5ED3C3; --c-elem:#C3CED8; --c-cat:#E78CE0; --c-an:#E78CE0; --c-org:#DCCB5E;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg); color:var(--ink); font-family:var(--font-body); font-size:16px; line-height:1.5; -webkit-text-size-adjust:100%}
+button{font:inherit; color:inherit; touch-action:manipulation; cursor:pointer}
+button:focus-visible, input:focus-visible, .card:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+sub,sup{font-size:.62em; line-height:0}
+sub{vertical-align:-.28em} sup{vertical-align:.62em}
+.app{max-width:880px; margin:0 auto; padding-inline:16px; padding-block:14px 48px; display:flex; flex-direction:column; gap:14px}
+
+/* cabecera */
+.top{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.brand{display:flex; align-items:center; gap:12px; min-width:0}
+.tile{width:46px; height:46px; border-radius:9px; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-family:var(--font-display); font-weight:700; font-size:20px; position:relative; flex:none}
+.tile small{position:absolute; top:3px; left:5px; font-size:9px; font-family:var(--font-mono); font-weight:500; opacity:.85}
+.brand h1{font-family:var(--font-display); font-size:20px; font-weight:600; margin:0; letter-spacing:-.01em; text-wrap:balance}
+.brand p{margin:0; color:var(--ink-2); font-size:13px}
+.topr{display:flex; align-items:center; gap:8px}
+.sync{font-family:var(--font-mono); font-size:11px; color:var(--ink-3); border:1px solid var(--line); border-radius:99px; padding:4px 10px; white-space:nowrap}
+.sync.on{color:var(--ok); border-color:color-mix(in srgb, var(--ok) 40%, var(--line))}
+.iconbtn{width:40px; height:40px; border-radius:10px; border:1px solid var(--line); background:var(--surface); display:grid; place-items:center}
+.iconbtn svg{width:20px; height:20px; stroke:var(--ink-2)}
+
+/* progreso global */
+.meter{display:flex; gap:3px; height:8px; border-radius:99px; overflow:hidden; background:var(--line)}
+.meter i{display:block; height:100%}
+.meterrow{display:flex; align-items:center; gap:12px; font-size:13px; color:var(--ink-2); flex-wrap:wrap}
+.meterrow .meter{flex:1 1 220px}
+.legend{display:flex; gap:12px; flex-wrap:wrap; font-variant-numeric:tabular-nums}
+.legend span::before{content:""; display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:5px; background:var(--dot)}
+
+.modnav{display:flex; gap:6px; flex-wrap:wrap}
+.modnav a{flex:1 1 96px; text-align:center; text-decoration:none; color:var(--ink-2); border:1px solid var(--line); background:var(--surface); border-radius:10px; padding:9px 12px; min-height:44px; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:500; font-size:13.5px}
+.modnav a[aria-current="page"]{background:var(--accent); color:var(--accent-ink); border-color:var(--accent); font-weight:600}
+.modnav a:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+/* pestañas */
+.tabs{display:flex; gap:4px; background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:4px; overflow-x:auto; scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:1 0 auto; border:0; background:transparent; padding:10px 14px; border-radius:9px; font-family:var(--font-display); font-weight:500; font-size:15px; color:var(--ink-2); min-height:44px}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--bg)}
+
+/* filtros */
+.filters{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.filters .lbl{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3); margin-right:4px}
+.chipbtn{border:1px solid var(--line); background:var(--surface); border-radius:99px; padding:6px 12px; font-size:14px; min-height:36px; display:inline-flex; align-items:center; gap:6px}
+.chipbtn[aria-pressed="true"]{background:color-mix(in srgb, var(--accent) 14%, var(--surface)); border-color:var(--accent); color:var(--ink)}
+.chipbtn .n{font-family:var(--font-mono); font-size:11px; color:var(--ink-3)}
+
+/* barras de herramientas */
+.bar{display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+.seg{display:inline-flex; border:1px solid var(--line); border-radius:10px; background:var(--surface); padding:3px; gap:2px}
+.seg button{border:0; background:transparent; border-radius:7px; padding:7px 11px; font-size:14px; color:var(--ink-2); min-height:38px}
+.seg button[aria-pressed="true"]{background:var(--surface-2); color:var(--ink); box-shadow:inset 0 0 0 1px var(--line); font-weight:700}
+.count{font-family:var(--font-mono); font-size:12px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+.progress{height:4px; background:var(--line); border-radius:99px; overflow:hidden}
+.progress i{display:block; height:100%; background:var(--accent); transition:width .25s}
+
+/* ficha */
+.stage{perspective:1600px}
+.card{display:block; width:100%; border:0; padding:0; background:transparent; text-align:left; -webkit-tap-highlight-color:transparent}
+.inner{display:grid; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .45s cubic-bezier(.3,.7,.2,1)}
+.card.flipped .inner{transform:rotateY(180deg)}
+.face{grid-area:1/1; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:var(--r); background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); min-height:360px; padding:22px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.face.back{transform:rotateY(180deg)}
+.front{background:color-mix(in srgb, var(--cc, var(--ink-3)) 7%, var(--surface)); border-color:color-mix(in srgb, var(--cc, var(--line)) 35%, var(--line))}
+.front.nohint{background:var(--surface); border-color:var(--line)}
+.facehead{display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:28px}
+.big{flex:1; display:grid; place-items:center; text-align:center; padding:12px 0}
+.formula{font-family:var(--font-display); font-weight:600; font-size:clamp(52px, 11vw, 96px); letter-spacing:-.01em; line-height:1.1; overflow-wrap:anywhere}
+.formula.long{font-size:clamp(36px, 7.5vw, 64px)}
+.namebig{font-family:var(--font-display); font-weight:500; font-size:clamp(28px, 5.4vw, 44px); line-height:1.2; text-wrap:balance}
+.hintline{font-size:13px; color:var(--ink-3); text-align:center}
+.chip{display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; padding:4px 9px; border-radius:6px; color:var(--cc); background:color-mix(in srgb, var(--cc) 13%, transparent); border:1px solid color-mix(in srgb, var(--cc) 35%, transparent); white-space:nowrap}
+.chip::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--cc)}
+.lvl{font-family:var(--font-mono); font-size:11px; color:var(--ink-3)}
+.backtop{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px 16px; padding-bottom:12px; border-bottom:1px solid var(--line)}
+.backtop .formula{font-size:clamp(34px,6vw,48px)}
+.backtop .namebig{font-size:clamp(22px,4vw,30px)}
+.names{display:grid; grid-template-columns:max-content 1fr; gap:6px 14px; margin:0; align-items:baseline}
+.names dt{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3)}
+.names dd{margin:0; font-size:17px; min-width:0}
+.ox{font-family:var(--font-mono); font-size:13px; color:var(--ink-2); display:flex; gap:8px; flex-wrap:wrap; align-items:baseline}
+.ox b{font-weight:500; color:var(--ink-3); font-size:11px; text-transform:uppercase; letter-spacing:.06em}
+.note{font-size:15px; color:var(--ink-2); background:var(--surface-2); border-radius:10px; padding:10px 12px; border:1px solid var(--line)}
+.note strong{color:var(--ink); font-weight:700}
+.fix{font-size:15px; background:color-mix(in srgb, var(--warn) 11%, var(--surface)); border:1px solid color-mix(in srgb, var(--warn) 40%, var(--line)); border-radius:10px; padding:10px 12px}
+.fix strong{color:var(--warn)}
+.grades{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+.gbtn{border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:12px 8px; min-height:58px; display:flex; flex-direction:column; align-items:center; gap:2px; font-weight:700; font-size:16px}
+.gbtn small{font-weight:400; font-size:12px; color:var(--ink-3); font-family:var(--font-mono)}
+.gbtn.g0{color:var(--bad); border-color:color-mix(in srgb, var(--bad) 45%, var(--line))}
+.gbtn.g1{color:var(--warn); border-color:color-mix(in srgb, var(--warn) 45%, var(--line))}
+.gbtn.g2{color:var(--ok); border-color:color-mix(in srgb, var(--ok) 45%, var(--line))}
+.gbtn:active{transform:scale(.98)}
+.primary{border:0; background:var(--accent); color:var(--accent-ink); border-radius:12px; padding:12px 18px; font-weight:700; min-height:48px; font-size:16px}
+.ghost{border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:12px 18px; min-height:48px; font-size:16px}
+.row{display:flex; gap:10px; flex-wrap:wrap}
+
+/* paneles */
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:20px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.panel h2{font-family:var(--font-display); font-weight:600; font-size:22px; margin:0; text-wrap:balance}
+.panel h3{font-family:var(--font-display); font-weight:600; font-size:17px; margin:6px 0 0}
+.panel p{margin:0}
+.muted{color:var(--ink-2)}
+.prompt{display:flex; flex-direction:column; align-items:center; gap:10px; padding:18px 0 8px; text-align:center}
+.opts{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.opt{border:1px solid var(--line); background:var(--surface-2); border-radius:12px; padding:14px; min-height:64px; text-align:left; font-size:17px; display:flex; gap:10px; align-items:center}
+.opt .k{font-family:var(--font-mono); font-size:11px; color:var(--ink-3); border:1px solid var(--line); border-radius:5px; padding:1px 6px; flex:none}
+.opt.f{font-family:var(--font-display); font-weight:600; font-size:24px; justify-content:center}
+.opt.right{border-color:var(--ok); background:color-mix(in srgb, var(--ok) 14%, var(--surface)); }
+.opt.wrong{border-color:var(--bad); background:color-mix(in srgb, var(--bad) 12%, var(--surface)); }
+.opt:disabled{cursor:default; color:inherit}
+.verdict{font-family:var(--font-display); font-weight:600; font-size:18px}
+.verdict.ok{color:var(--ok)} .verdict.bad{color:var(--bad)}
+.catgrid{display:flex; flex-direction:column; gap:10px}
+.catfam{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.catfam .fam{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3); width:100%}
+.catbtn{border:1px solid color-mix(in srgb, var(--cc) 45%, var(--line)); background:color-mix(in srgb, var(--cc) 8%, var(--surface)); color:var(--ink); border-radius:10px; padding:10px 14px; min-height:44px; font-size:15px; display:inline-flex; align-items:center; gap:8px}
+.catbtn::before{content:""; width:9px; height:9px; border-radius:50%; background:var(--cc)}
+.catbtn.right{outline:3px solid var(--ok)} .catbtn.wrong{outline:3px solid var(--bad)}
+.catbtn:disabled{cursor:default}
+.writebox{display:flex; gap:10px; flex-wrap:wrap}
+.writebox input{flex:1 1 220px; min-width:0; font-family:var(--font-display); font-size:26px; font-weight:600; padding:10px 14px; border-radius:12px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink)}
+.preview{font-family:var(--font-display); font-size:22px; min-height:34px; color:var(--ink-2); text-align:center}
+.keys{display:flex; gap:6px; flex-wrap:wrap; justify-content:center}
+.keys button{min-width:44px; min-height:44px; border:1px solid var(--line); border-radius:9px; background:var(--surface-2); font-family:var(--font-display); font-size:18px}
+.summary{display:flex; gap:10px; flex-wrap:wrap}
+.stat{flex:1 1 120px; border:1px solid var(--line); border-radius:12px; padding:12px; background:var(--surface-2)}
+.stat b{display:block; font-family:var(--font-display); font-size:28px; font-weight:600; font-variant-numeric:tabular-nums}
+.stat span{font-size:13px; color:var(--ink-2)}
+.misslist{display:flex; flex-wrap:wrap; gap:8px}
+.miss{border:1px solid var(--line); border-radius:9px; padding:6px 10px; background:var(--surface-2); font-size:14px}
+.miss .fx{font-family:var(--font-display); font-weight:600; margin-right:6px}
+
+/* lista */
+.search{width:100%; font-size:17px; padding:12px 14px; border-radius:12px; border:1px solid var(--line); background:var(--surface); color:var(--ink)}
+.group{display:flex; flex-direction:column; gap:0; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); overflow:hidden}
+.ghead{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 16px; background:color-mix(in srgb, var(--cc) 9%, var(--surface)); border-bottom:1px solid var(--line)}
+.ghead h3{margin:0; font-family:var(--font-display); font-size:16px; font-weight:600; display:flex; align-items:center; gap:8px}
+.ghead h3::before{content:""; width:10px; height:10px; border-radius:50%; background:var(--cc)}
+.ghead p{margin:0; font-size:13px; color:var(--ink-2); flex:1 1 260px; text-align:right}
+.item{display:grid; grid-template-columns:minmax(110px, 30%) 1fr auto; gap:12px; align-items:center; padding:11px 16px; border:0; border-top:1px solid var(--line); background:transparent; text-align:left; width:100%; min-height:52px}
+.item:first-of-type{border-top:0}
+.item .fx{font-family:var(--font-display); font-weight:600; font-size:20px; overflow-wrap:anywhere}
+.item .nm{min-width:0}
+.item .nm small{display:block; color:var(--ink-3); font-size:13px}
+.item.flag .nm::after{content:"corrección"; font-family:var(--font-mono); font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--warn); margin-left:6px}
+.dots{display:flex; gap:3px}
+.dots i{width:7px; height:7px; border-radius:50%; background:var(--line)}
+.dots i.on{background:var(--accent)}
+
+/* reglas */
+.rules{display:flex; flex-direction:column; gap:14px}
+.steps{margin:0; padding-left:22px; display:flex; flex-direction:column; gap:10px}
+.steps li{padding-left:4px}
+.steps li ul{margin:6px 0 0; padding-left:18px; display:flex; flex-direction:column; gap:4px; color:var(--ink-2)}
+.tw{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:15px}
+th,td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+th{font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-3); font-weight:500}
+td .fx, .fx{font-family:var(--font-display); font-weight:600}
+.mnemo{font-family:var(--font-display); font-size:19px; font-weight:500; border-left:0; background:color-mix(in srgb, var(--accent) 10%, var(--surface)); border-radius:10px; padding:12px 14px}
+.eq{font-family:var(--font-display); font-size:17px}
+.fixlist{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px}
+.legendgrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr)); gap:8px}
+.legendgrid div{display:flex; gap:8px; align-items:flex-start; font-size:14px; color:var(--ink-2)}
+.legendgrid div .chip{flex:none}
+
+/* modal */
+.overlay{position:fixed; inset:0; background:rgba(8,14,18,.5); display:flex; align-items:flex-end; justify-content:center; padding:16px; z-index:20}
+.sheet{width:100%; max-width:640px; max-height:88vh; overflow:auto; background:var(--surface); border-radius:var(--r); border:1px solid var(--line); box-shadow:var(--shadow); padding:20px; display:flex; flex-direction:column; gap:14px}
+@media (min-width:700px){ .overlay{align-items:center} }
+.sheet .close{align-self:flex-end}
+label.set{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
+
+@media (max-width:560px){
+  .opts{grid-template-columns:1fr}
+  .face{min-height:320px; padding:18px}
+  .item{grid-template-columns:96px 1fr auto}
+  .names{grid-template-columns:1fr}
+  .names dt{margin-top:6px}
+}
+@media (prefers-reduced-motion: reduce){
+  .inner{transition:none}
+  .progress i{transition:none}
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="tile" aria-hidden="true"><small>8</small>O</div>
+      <div>
+        <h1>Fichas de Formulación</h1>
+        <p id="subtitle">Química inorgánica y orgánica básica</p>
+      </div>
+    </div>
+    <div class="topr">
+      <span class="sync" id="sync">Guardado en este navegador</span>
+      <button class="iconbtn" id="openSettings" aria-label="Ajustes">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="modnav" aria-label="Módulos"><a href="index.html">← Kimika</a><a href="formulacion.html" aria-current="page">Formulación</a></nav>
+
+  <div class="meterrow">
+    <div class="meter" id="meter" aria-hidden="true"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-tab="repasar" aria-selected="true">Repasar</button>
+    <button role="tab" data-tab="test" aria-selected="false">Test</button>
+    <button role="tab" data-tab="clasificar" aria-selected="false">Clasificar</button>
+    <button role="tab" data-tab="escribir" aria-selected="false">Escribir</button>
+    <button role="tab" data-tab="lista" aria-selected="false">Lista</button>
+    <button role="tab" data-tab="reglas" aria-selected="false">Reglas</button>
+  </nav>
+
+  <div class="filters" id="filters"></div>
+
+  <main id="view"></main>
+</div>
+
+<div class="overlay" id="overlay" hidden></div>
+
+<script>
+/* ================= DATOS ================= */
+const FAMS = [
+  {k:'oxidos', n:'Óxidos', cats:['oxb','oxa','oxanf','oxn','per']},
+  {k:'hidroxidos', n:'Hidróxidos', cats:['hid']},
+  {k:'binarios', n:'Hidruros y binarios', cats:['hidr','bin']},
+  {k:'acidos', n:'Ácidos', cats:['oxac','hidac']},
+  {k:'sales', n:'Sales', cats:['oxs','sac','salb']},
+  {k:'simples', n:'Sustancias simples', cats:['elem']},
+  {k:'iones', n:'Iones', cats:['cat','an']},
+  {k:'organicos', n:'Orgánicos', cats:['org']},
+];
+const CATS = {
+  oxb:  {n:'Óxido básico', r:'Metal + oxígeno (O con −2). Con agua forma un hidróxido: {CaO} + {H2O} → {Ca(OH)2}.'},
+  oxa:  {n:'Óxido ácido', r:'No metal (o metal con n.º de oxidación alto, +6 o +7) + oxígeno. Con agua forma un oxácido: {SO3} + {H2O} → {H2SO4}. Nombre tradicional: anhídrido.'},
+  oxanf:{n:'Óxido anfótero', r:'Reacciona tanto con ácidos como con bases. Típicos: Al, Zn, Pb, Sn, Cr(III), Mn(IV), Ti(IV).'},
+  oxn:  {n:'Óxido neutro', r:'Óxido de no metal que no forma ácido con agua ni reacciona con bases: {CO}, {NO}, {N2O}.'},
+  per:  {n:'Peróxido', r:'Contiene el ion peróxido {O2^2-} (enlace O–O): el oxígeno tiene −1. El subíndice 2 del O nunca se simplifica.'},
+  hid:  {n:'Hidróxido', r:'Metal (o {NH4^+}) unido a grupos {OH^-}. Son bases.'},
+  hidr: {n:'Hidruro', r:'Combinación binaria del H con otro elemento. Los del grupo 15 ({NH3}, {PH3}) no son ácidos y tienen nombre propio.'},
+  bin:  {n:'Binario covalente', r:'Dos no metales, sin H ni O. Se nombra con -uro el elemento de la derecha: tricloruro de fósforo.'},
+  oxac: {n:'Oxácido', r:'H + no metal (o metal de transición con n.º de oxidación alto) + O. Se nombra con hipo…oso, …oso, …ico, per…ico.'},
+  hidac:{n:'Hidrácido', r:'H + no metal de los grupos 16–17 (o el grupo CN). En disolución acuosa: ácido …hídrico. Sin agua: …uro de hidrógeno.'},
+  oxs:  {n:'Oxisal', r:'Metal (o {NH4^+}) + oxoanión. Sale de sustituir todos los H del oxácido: …ico → …ato, …oso → …ito.'},
+  sac:  {n:'Sal ácida', r:'Sal cuyo anión conserva algún H del ácido: hidrogeno-, dihidrogeno- (antes "bi-" o "…ácido").'},
+  salb: {n:'Sal binaria', r:'Metal + no metal (sin O ni H). Se nombra …uro de metal: cloruro de sodio.'},
+  elem: {n:'Sustancia simple', r:'Un único elemento: átomos (metales, gases nobles, C) o moléculas ({O2}, {O3}, {Cl2}…). N.º de oxidación 0.'},
+  cat:  {n:'Catión', r:'Especie con carga positiva.'},
+  an:   {n:'Anión', r:'Especie con carga negativa: …uro (monoatómicos) o …ato / …ito (oxoaniones).'},
+  org:  {n:'Orgánico', r:'Compuestos del carbono con enlaces C–H. {CO}, {CO2}, {H2CO3}, carbonatos y cianuros se estudian como inorgánicos.'},
+};
+const famOf = {}; FAMS.forEach(f=>f.cats.forEach(c=>famOf[c]=f.k));
+
+// f: fórmula (dígitos = subíndices, ^ = carga), c: categoría, nm: [etiqueta, nombre] (el primero es el principal)
+// ox: números de oxidación, t: truco/explicación, x: corrección a la hoja, a: fórmulas alternativas aceptadas, s: subtipo
+const CARDS = [
+// ---- ÓXIDOS ----
+{f:'Na2O', c:'oxb', nm:[['Stock','óxido de sodio'],['Sistemática','óxido de disodio']], ox:'Na +1 · O −2', t:'{Na2O} + {H2O} → 2 {NaOH}. El Na solo tiene +1, por eso no se escribe (I).'},
+{f:'Al2O3', c:'oxanf', nm:[['Stock','óxido de aluminio'],['Sistemática','trióxido de dialuminio'],['Común','alúmina']], ox:'Al +3 · O −2', t:'Anfótero: se disuelve en ácidos (da Al³⁺) y en bases fuertes (da aluminatos). En formulación básica se agrupa con los óxidos metálicos.'},
+{f:'Fe2O3', c:'oxb', nm:[['Stock','óxido de hierro(III)'],['Tradicional','óxido férrico'],['Sistemática','trióxido de dihierro']], ox:'Fe +3 · O −2', t:'Fe: +2 (…oso) y +3 (…ico). Es la hematita y la base de la herrumbre. Básico, aunque débilmente anfótero.'},
+{f:'FeO', c:'oxb', nm:[['Stock','óxido de hierro(II)'],['Tradicional','óxido ferroso'],['Sistemática','monóxido de hierro']], ox:'Fe +2 · O −2', t:'Fe²⁺ y O²⁻: las cargas se compensan 1 a 1.'},
+{f:'Ag2O', c:'oxb', nm:[['Stock','óxido de plata'],['Sistemática','óxido de diplata']], ox:'Ag +1 · O −2', t:'La plata actúa con +1, por eso no lleva (I).'},
+{f:'MgO', c:'oxb', nm:[['Stock','óxido de magnesio'],['Común','magnesia']], ox:'Mg +2 · O −2'},
+{f:'NiO', c:'oxb', nm:[['Stock','óxido de níquel(II)'],['Tradicional','óxido niqueloso'],['Sistemática','monóxido de níquel']], ox:'Ni +2 · O −2', x:'La hoja pone "óxido de níquel". El Ni actúa con +2 y +3, así que en Stock hay que indicar (II).'},
+{f:'MnO2', c:'oxanf', nm:[['Sistemática','dióxido de manganeso'],['Stock','óxido de manganeso(IV)'],['Común','pirolusita (mineral)']], ox:'Mn +4 · O −2', t:'El carácter ácido sube con el n.º de oxidación: {MnO} básico, {MnO2} anfótero, {Mn2O7} ácido.'},
+{f:'TiO2', c:'oxanf', nm:[['Sistemática','dióxido de titanio'],['Stock','óxido de titanio(IV)']], ox:'Ti +4 · O −2', t:'Pigmento blanco de pinturas y cremas solares. Anfótero débil.'},
+{f:'ZnO', c:'oxanf', nm:[['Stock','óxido de cinc'],['Variante','óxido de zinc']], ox:'Zn +2 · O −2', t:'Anfótero: con bases forma cincatos. "Cinc" y "zinc" son correctas.'},
+{f:'CrO3', c:'oxa', nm:[['Sistemática','trióxido de cromo'],['Stock','óxido de cromo(VI)'],['Tradicional','anhídrido crómico']], ox:'Cr +6 · O −2', t:'Un metal con n.º de oxidación alto da óxidos ácidos: {CrO3} + {H2O} → {H2CrO4} (ácido crómico).'},
+{f:'CaO', c:'oxb', nm:[['Stock','óxido de calcio'],['Común','cal viva']], ox:'Ca +2 · O −2', t:'{CaO} + {H2O} → {Ca(OH)2} (cal apagada).'},
+{f:'CuO', c:'oxb', nm:[['Stock','óxido de cobre(II)'],['Tradicional','óxido cúprico'],['Sistemática','monóxido de cobre']], ox:'Cu +2 · O −2', t:'Cu: +1 (…oso) y +2 (…ico).'},
+{f:'Cu2O', c:'oxb', nm:[['Stock','óxido de cobre(I)'],['Tradicional','óxido cuproso'],['Sistemática','óxido de dicobre']], ox:'Cu +1 · O −2'},
+{f:'Na2O2', c:'per', nm:[['Común','peróxido de sodio'],['Sistemática','dióxido de disodio']], ox:'Na +1 · O −1 (ion {O2^2-})', t:'No se simplifica a NaO: el O₂ es el ion peróxido {O2^2-}.'},
+{f:'CO', c:'oxn', nm:[['Sistemática','monóxido de carbono'],['Stock','óxido de carbono(II)']], ox:'C +2 · O −2', t:'Neutro: no forma ácido con agua. Gas muy tóxico (se une a la hemoglobina).'},
+{f:'CO2', c:'oxa', nm:[['Sistemática','dióxido de carbono'],['Stock','óxido de carbono(IV)'],['Tradicional','anhídrido carbónico']], ox:'C +4 · O −2', t:'{CO2} + {H2O} → {H2CO3} (ácido carbónico).'},
+{f:'SO3', c:'oxa', nm:[['Sistemática','trióxido de azufre'],['Stock','óxido de azufre(VI)'],['Tradicional','anhídrido sulfúrico']], ox:'S +6 · O −2', t:'{SO3} + {H2O} → {H2SO4}.'},
+{f:'SO2', c:'oxa', nm:[['Sistemática','dióxido de azufre'],['Stock','óxido de azufre(IV)'],['Tradicional','anhídrido sulfuroso']], ox:'S +4 · O −2', t:'{SO2} + {H2O} → {H2SO3}. Causa de la lluvia ácida junto con los NOₓ.'},
+{f:'N2O', c:'oxn', nm:[['Sistemática','óxido de dinitrógeno'],['Tradicional','óxido nitroso'],['Común','gas hilarante']], ox:'N +1 · O −2', t:'Ojo: "óxido nitroso" es {N2O} y "óxido nítrico" es {NO}. No guardan relación con los ácidos nitroso y nítrico.'},
+{f:'NO', c:'oxn', nm:[['Sistemática','monóxido de nitrógeno'],['Stock','óxido de nitrógeno(II)'],['Tradicional','óxido nítrico']], ox:'N +2 · O −2', t:'Neutro. En el aire se oxida enseguida a {NO2}.'},
+{f:'NO2', c:'oxa', nm:[['Sistemática','dióxido de nitrógeno'],['Stock','óxido de nitrógeno(IV)']], ox:'N +4 · O −2', t:'Gas pardo. Óxido ácido "mixto": 2 {NO2} + {H2O} → {HNO3} + {HNO2}. Por eso no tiene nombre de anhídrido.'},
+{f:'N2O4', c:'oxa', nm:[['Sistemática','tetraóxido de dinitrógeno'],['Stock','óxido de nitrógeno(IV)']], ox:'N +4 · O −2', t:'Dímero del NO₂ (2 {NO2} ⇌ {N2O4}); no se simplifica. Su nombre Stock coincide con el del NO₂, por eso se usa la sistemática.'},
+{f:'N2O3', c:'oxa', nm:[['Sistemática','trióxido de dinitrógeno'],['Stock','óxido de nitrógeno(III)'],['Tradicional','anhídrido nitroso']], ox:'N +3 · O −2', t:'{N2O3} + {H2O} → 2 {HNO2} (ácido nitroso).'},
+{f:'N2O5', c:'oxa', nm:[['Sistemática','pentaóxido de dinitrógeno'],['Stock','óxido de nitrógeno(V)'],['Tradicional','anhídrido nítrico']], ox:'N +5 · O −2', t:'{N2O5} + {H2O} → 2 {HNO3} (ácido nítrico).'},
+{f:'H2O2', c:'per', nm:[['Común','peróxido de hidrógeno'],['Sistemática','dióxido de dihidrógeno'],['Común','agua oxigenada']], ox:'H +1 · O −1', t:'"Agua oxigenada" es en rigor su disolución acuosa (la de farmacia, al 3 %). No se simplifica a HO.'},
+// ---- HIDRÓXIDOS ----
+{f:'KOH', c:'hid', nm:[['Stock','hidróxido de potasio'],['Común','potasa cáustica']], ox:'K +1 · OH −1', t:'Base fuerte. "Potasa" a secas también se ha usado para el {K2CO3}; lo preciso para el KOH es "potasa cáustica".'},
+{f:'NH4OH', c:'hid', nm:[['Común','hidróxido de amonio'],['Más correcto','amoníaco acuoso, NH₃(ac)']], ox:'N −3 · H +1 (catión {NH4^+})', t:'No se ha aislado como compuesto: es una disolución de amoníaco en agua ({NH3} + {H2O} ⇌ {NH4^+} + {OH^-}). Base débil.'},
+{f:'NaOH', c:'hid', nm:[['Stock','hidróxido de sodio'],['Común','sosa cáustica']], ox:'Na +1 · OH −1', t:'Base fuerte. Se usa para fabricar jabón.'},
+{f:'Ca(OH)2', c:'hid', nm:[['Stock','hidróxido de calcio'],['Sistemática','dihidróxido de calcio'],['Común','cal apagada']], ox:'Ca +2 · OH −1', t:'El paréntesis es obligatorio: el 2 multiplica todo el grupo OH.'},
+{f:'Al(OH)3', c:'hid', nm:[['Stock','hidróxido de aluminio'],['Sistemática','trihidróxido de aluminio']], ox:'Al +3 · OH −1', t:'Anfótero, como su óxido {Al2O3}. Se usa como antiácido.'},
+{f:'Fe(OH)2', c:'hid', nm:[['Stock','hidróxido de hierro(II)'],['Tradicional','hidróxido ferroso'],['Sistemática','dihidróxido de hierro']], ox:'Fe +2 · OH −1'},
+{f:'Fe(OH)3', c:'hid', nm:[['Stock','hidróxido de hierro(III)'],['Tradicional','hidróxido férrico'],['Sistemática','trihidróxido de hierro']], ox:'Fe +3 · OH −1'},
+{f:'Pb(OH)2', c:'hid', nm:[['Stock','hidróxido de plomo(II)'],['Tradicional','hidróxido plumboso'],['Sistemática','dihidróxido de plomo']], ox:'Pb +2 · OH −1', t:'Pb: +2 (…oso) y +4 (…ico). Anfótero.'},
+{f:'Mg(OH)2', c:'hid', nm:[['Stock','hidróxido de magnesio'],['Sistemática','dihidróxido de magnesio'],['Común','leche de magnesia (suspensión)']], ox:'Mg +2 · OH −1'},
+// ---- HIDRUROS Y BINARIOS ----
+{f:'PH3', c:'hidr', nm:[['Tradicional','fosfina'],['IUPAC','fosfano'],['Sistemática','trihidruro de fósforo']], ox:'P −3 · H +1', t:'La IUPAC (2005) prefiere "fosfano"; "fosfina" sigue siendo muy usado. Gas muy tóxico.'},
+{f:'NH3', c:'hidr', nm:[['Común','amoníaco'],['IUPAC','azano'],['Sistemática','trihidruro de nitrógeno']], ox:'N −3 · H +1', t:'La IUPAC acepta "amoníaco" (también "amoniaco"). Base débil: {NH3} + {H^+} → {NH4^+}.'},
+{f:'PCl3', c:'bin', nm:[['Sistemática','tricloruro de fósforo'],['Stock','cloruro de fósforo(III)']], ox:'P +3 · Cl −1', t:'Se nombra primero, con -uro, el elemento más electronegativo (el de la derecha).', x:'La hoja lo pone junto a los hidruros, pero no lleva H: es un haluro de no metal (binario covalente).'},
+// ---- OXÁCIDOS ----
+{f:'H2SO4', c:'oxac', nm:[['Tradicional','ácido sulfúrico'],['Hidrógeno','dihidrogeno(tetraoxidosulfato)']], ox:'H +1 · S +6 · O −2', t:'Ácido fuerte. Anión {SO4^2-}: sulfato (…ico → …ato).'},
+{f:'H2SO3', c:'oxac', nm:[['Tradicional','ácido sulfuroso'],['Hidrógeno','dihidrogeno(trioxidosulfato)']], ox:'H +1 · S +4 · O −2', t:'…oso → …ito: sulfito {SO3^2-}.'},
+{f:'HClO4', c:'oxac', nm:[['Tradicional','ácido perclórico'],['Hidrógeno','hidrogeno(tetraoxidoclorato)']], ox:'H +1 · Cl +7 · O −2', t:'Serie del Cl: hipo…oso (+1), …oso (+3), …ico (+5), per…ico (+7). Uno de los ácidos más fuertes.'},
+{f:'HClO3', c:'oxac', nm:[['Tradicional','ácido clórico'],['Hidrógeno','hidrogeno(trioxidoclorato)']], ox:'H +1 · Cl +5 · O −2', t:'Sus sales son cloratos ({KClO3}).'},
+{f:'HClO2', c:'oxac', nm:[['Tradicional','ácido cloroso'],['Hidrógeno','hidrogeno(dioxidoclorato)']], ox:'H +1 · Cl +3 · O −2', t:'Sus sales son cloritos.'},
+{f:'HClO', c:'oxac', nm:[['Tradicional','ácido hipocloroso'],['Hidrógeno','hidrogeno(oxidoclorato)']], ox:'H +1 · Cl +1 · O −2', a:['HOCl'], t:'Su sal sódica, {NaClO} (hipoclorito de sodio), es la lejía. La IUPAC lo escribe HOCl porque el H va unido al O.'},
+{f:'HNO3', c:'oxac', nm:[['Tradicional','ácido nítrico'],['Hidrógeno','hidrogeno(trioxidonitrato)']], ox:'H +1 · N +5 · O −2', t:'Ácido fuerte. {N2O5} + {H2O} → 2 {HNO3}.'},
+{f:'HNO2', c:'oxac', nm:[['Tradicional','ácido nitroso'],['Hidrógeno','hidrogeno(dioxidonitrato)']], ox:'H +1 · N +3 · O −2', t:'Ácido débil. Sus sales son nitritos ({NaNO2}).'},
+{f:'H2CO3', c:'oxac', nm:[['Tradicional','ácido carbónico'],['Hidrógeno','dihidrogeno(trioxidocarbonato)']], ox:'H +1 · C +4 · O −2', t:'Inestable: se descompone en {CO2} + {H2O}. Da carbonatos ({CO3^2-}) e hidrogenocarbonatos ({HCO3^-}).'},
+{f:'H2CrO4', c:'oxac', nm:[['Tradicional','ácido crómico'],['Hidrógeno','dihidrogeno(tetraoxidocromato)']], ox:'H +1 · Cr +6 · O −2', t:'Mismo n.º de oxidación que el ácido dicrómico {H2Cr2O7}, del que sale el dicromato {K2Cr2O7}.'},
+{f:'HMnO4', c:'oxac', nm:[['Tradicional','ácido permangánico'],['Hidrógeno','hidrogeno(tetraoxidomanganato)']], ox:'H +1 · Mn +7 · O −2', t:'Da el permanganato {MnO4^-} ({KMnO4}).'},
+{f:'H3PO4', c:'oxac', nm:[['Tradicional','ácido fosfórico'],['Tradicional','ácido ortofosfórico'],['Hidrógeno','trihidrogeno(tetraoxidofosfato)']], ox:'H +1 · P +5 · O −2', t:'"Orto" indica la forma más hidratada: {P2O5} + 3 {H2O} → 2 {H3PO4}. Triprótico: {H2PO4^-}, {HPO4^2-}, {PO4^3-}.'},
+{f:'H3PO3', c:'oxac', nm:[['Tradicional','ácido fosforoso'],['Tradicional','ácido ortofosforoso'],['IUPAC','ácido fosfónico, HPO(OH)₂']], ox:'H +1 · P +3 · O −2', t:'Tiene 3 H pero solo 2 son ácidos: uno está unido directamente al P. Es diprótico.'},
+{f:'H3AsO4', c:'oxac', nm:[['Tradicional','ácido arsénico'],['Tradicional','ácido ortoarsénico'],['Hidrógeno','trihidrogeno(tetraoxidoarseniato)']], ox:'H +1 · As +5 · O −2', t:'El As está en el grupo del P (15): se formula igual que el {H3PO4}. Sus sales son arseniatos.'},
+// ---- HIDRÁCIDOS ----
+{f:'HI', c:'hidac', nm:[['En disolución','ácido yodhídrico'],['Sin agua','yoduro de hidrógeno'],['Variante','ácido iodhídrico']], ox:'H +1 · I −1', t:'Ácido fuerte. La RAE prefiere "yodo", pero "iodo" también es válida.'},
+{f:'HBr', c:'hidac', nm:[['En disolución','ácido bromhídrico'],['Sin agua','bromuro de hidrógeno']], ox:'H +1 · Br −1', t:'Ácido fuerte.'},
+{f:'HCl', c:'hidac', nm:[['En disolución','ácido clorhídrico'],['Sin agua','cloruro de hidrógeno'],['Común','salfumán (disolución comercial)']], ox:'H +1 · Cl −1', t:'"(ac)" en la hoja significa "en disolución acuosa": solo entonces se llama ácido …hídrico. Ácido fuerte.'},
+{f:'HF', c:'hidac', nm:[['En disolución','ácido fluorhídrico'],['Sin agua','fluoruro de hidrógeno']], ox:'H +1 · F −1', t:'A diferencia de HCl, HBr y HI, es un ácido DÉBIL (el enlace H–F es muy fuerte). Ataca el vidrio.'},
+{f:'HCN', c:'hidac', nm:[['En disolución','ácido cianhídrico'],['Sin agua','cianuro de hidrógeno']], ox:'H +1 · C +2 · N −3', t:'No es binario (tiene 3 elementos), pero el {CN^-} se comporta como un haluro y se nombra igual. Débil y muy tóxico.'},
+{f:'H2S', c:'hidac', nm:[['En disolución','ácido sulfhídrico'],['Sin agua','sulfuro de hidrógeno'],['IUPAC','sulfano']], ox:'H +1 · S −2', t:'Olor a huevo podrido. Ácido débil.'},
+// ---- OXISALES ----
+{f:'KMnO4', c:'oxs', nm:[['Stock','permanganato de potasio'],['Tradicional','permanganato potásico'],['Sistemática','tetraoxidomanganato de potasio']], ox:'K +1 · Mn +7 · O −2', t:'Morado intenso, oxidante fuerte. {HMnO4} → {MnO4^-} (per…ico → per…ato).'},
+{f:'K2Cr2O7', c:'oxs', nm:[['Stock','dicromato de potasio'],['Tradicional','dicromato potásico'],['Sistemática','heptaoxidodicromato de dipotasio']], ox:'K +1 · Cr +6 · O −2', t:'Naranja, oxidante. Anión dicromato {Cr2O7^2-}.'},
+{f:'Na2SO4', c:'oxs', nm:[['Stock','sulfato de sodio'],['Tradicional','sulfato sódico'],['Sistemática','tetraoxidosulfato de disodio']], ox:'Na +1 · S +6 · O −2', t:'2 Na⁺ compensan la carga 2− del {SO4^2-}.'},
+{f:'MnSO4', c:'oxs', nm:[['Stock','sulfato de manganeso(II)'],['Tradicional','sulfato manganoso'],['Sistemática','tetraoxidosulfato de manganeso']], ox:'Mn +2 · S +6 · O −2', t:'El sulfato tiene carga 2− y hay un solo Mn → Mn²⁺. Mn como metal: +2 (…oso), +3 (…ico).'},
+{f:'CuSO4', c:'oxs', nm:[['Stock','sulfato de cobre(II)'],['Tradicional','sulfato cúprico'],['Sistemática','tetraoxidosulfato de cobre']], ox:'Cu +2 · S +6 · O −2', t:'Anhidro es blanco; el pentahidrato {CuSO4·5H2O} es azul.'},
+{f:'KNO3', c:'oxs', nm:[['Stock','nitrato de potasio'],['Tradicional','nitrato potásico'],['Común','salitre'],['Sistemática','trioxidonitrato de potasio']], ox:'K +1 · N +5 · O −2', t:'Componente de la pólvora y de abonos.'},
+{f:'CaCO3', c:'oxs', nm:[['Stock','carbonato de calcio'],['Común','calcita, caliza, mármol'],['Sistemática','trioxidocarbonato de calcio']], ox:'Ca +2 · C +4 · O −2', t:'Con ácidos desprende {CO2} (efervescencia).'},
+{f:'CaSO4', c:'oxs', nm:[['Stock','sulfato de calcio'],['Común','yeso (dihidratado)'],['Sistemática','tetraoxidosulfato de calcio']], ox:'Ca +2 · S +6 · O −2', t:'El yeso es {CaSO4·2H2O}.'},
+{f:'NH4NO3', c:'oxs', nm:[['Stock','nitrato de amonio'],['Sistemática','trioxidonitrato de amonio']], ox:'N −3 (en {NH4^+}) · N +5 (en {NO3^-})', t:'El mismo elemento aparece con dos n.º de oxidación distintos. Fertilizante.'},
+{f:'Fe(NO3)3', c:'oxs', nm:[['Stock','nitrato de hierro(III)'],['Tradicional','nitrato férrico'],['Sistemática','tris(trioxidonitrato) de hierro']], ox:'Fe +3 · N +5 · O −2', t:'3 × (−1) = −3 → Fe³⁺. El paréntesis indica que el 3 multiplica todo el {NO3^-}.'},
+{f:'Fe(NO3)2', c:'oxs', nm:[['Stock','nitrato de hierro(II)'],['Tradicional','nitrato ferroso'],['Sistemática','bis(trioxidonitrato) de hierro']], ox:'Fe +2 · N +5 · O −2'},
+{f:'AgNO3', c:'oxs', nm:[['Stock','nitrato de plata'],['Sistemática','trioxidonitrato de plata']], ox:'Ag +1 · N +5 · O −2', t:'Se usa para detectar cloruros (precipita {AgCl} blanco).'},
+{f:'NaNO2', c:'oxs', nm:[['Stock','nitrito de sodio'],['Tradicional','nitrito sódico'],['Sistemática','dioxidonitrato de sodio']], ox:'Na +1 · N +3 · O −2', t:'Ácido nitroso → nitrito (…oso → …ito). Conservante E-250.'},
+{f:'KClO4', c:'oxs', nm:[['Stock','perclorato de potasio'],['Tradicional','perclorato potásico'],['Sistemática','tetraoxidoclorato de potasio']], ox:'K +1 · Cl +7 · O −2', t:'Ácido perclórico → perclorato.'},
+{f:'Na2CO3', c:'oxs', nm:[['Stock','carbonato de sodio'],['Tradicional','carbonato sódico'],['Común','sosa (Solvay)'],['Sistemática','trioxidocarbonato de disodio']], ox:'Na +1 · C +4 · O −2'},
+{f:'Na3PO4', c:'oxs', nm:[['Stock','fosfato de sodio'],['Tradicional','fosfato sódico'],['Común','fosfato trisódico'],['Sistemática','tetraoxidofosfato de trisodio']], ox:'Na +1 · P +5 · O −2', t:'{PO4^3-} tiene carga 3− → 3 Na⁺.'},
+{f:'Ca3(PO4)2', c:'oxs', nm:[['Stock','fosfato de calcio'],['Sistemática','bis(tetraoxidofosfato) de tricalcio']], ox:'Ca +2 · P +5 · O −2', t:'Cruce de cargas: Ca²⁺ y {PO4^3-} → {Ca3(PO4)2} (3·(+2) = 2·(−3)).'},
+// ---- SALES ÁCIDAS ----
+{f:'NaHCO3', c:'sac', nm:[['Actual','hidrogenocarbonato de sodio'],['Tradicional','bicarbonato sódico'],['Sistemática','hidrogeno(trioxidocarbonato) de sodio']], ox:'Na +1 · H +1 · C +4 · O −2', t:'"Bi-" es el nombre antiguo de "hidrogeno-": la sal conserva un H del ácido. Anión {HCO3^-}.'},
+{f:'(NH4)2HPO4', c:'sac', nm:[['Actual','hidrogenofosfato de amonio'],['Tradicional','fosfato monoácido de amonio'],['Común','fosfato diamónico']], ox:'N −3 · H +1 · P +5 · O −2', t:'Queda 1 H en el anión {HPO4^2-} ("monoácido"); dos {NH4^+} compensan su carga 2−.', x:'"Fosfato monoácido" es nomenclatura antigua; la actual es "hidrogenofosfato de amonio" (o "de diamonio").'},
+{f:'Ca(HCO3)2', c:'sac', nm:[['Actual','hidrogenocarbonato de calcio'],['Tradicional','bicarbonato de calcio']], ox:'Ca +2 · H +1 · C +4 · O −2', t:'Solo existe en disolución; causa la dureza temporal del agua.'},
+{f:'CaHPO4', c:'sac', nm:[['Actual','hidrogenofosfato de calcio'],['Variante','monohidrogenofosfato de calcio'],['Tradicional','fosfato monoácido de calcio']], ox:'Ca +2 · H +1 · P +5 · O −2', t:'"Mono" es opcional: "hidrogeno" ya indica un solo H. {HPO4^2-} (2−) con Ca²⁺ → 1:1.'},
+{f:'Ca(H2PO4)2', c:'sac', nm:[['Actual','dihidrogenofosfato de calcio'],['Tradicional','fosfato diácido de calcio']], ox:'Ca +2 · H +1 · P +5 · O −2', t:'{H2PO4^-} tiene carga 1− → hacen falta 2 por cada Ca²⁺. Componente del "superfosfato" (abono).'},
+{f:'Al(H2PO4)3', c:'sac', nm:[['Actual','dihidrogenofosfato de aluminio'],['Tradicional','fosfato diácido de aluminio']], ox:'Al +3 · H +1 · P +5 · O −2', t:'Al³⁺ necesita tres {H2PO4^-}.'},
+{f:'NaHS', c:'sac', nm:[['Actual','hidrogenosulfuro de sodio'],['Tradicional','hidrogenosulfuro sódico'],['Tradicional','sulfhidrato de sodio']], ox:'Na +1 · H +1 · S −2', t:'Sal ácida de un hidrácido ({H2S}): conserva un H. Anión {HS^-}.', x:'La hoja la coloca entre las sales binarias, pero tiene 3 elementos: es una sal ácida.'},
+// ---- SALES BINARIAS ----
+{f:'NaCl', c:'salb', nm:[['Stock','cloruro de sodio'],['Tradicional','cloruro sódico'],['Común','sal común, halita']], ox:'Na +1 · Cl −1'},
+{f:'AgCl', c:'salb', nm:[['Stock','cloruro de plata']], ox:'Ag +1 · Cl −1', t:'Muy poco soluble: precipitado blanco que sirve para detectar Cl⁻. Se oscurece con la luz.'},
+{f:'PbCl2', c:'salb', nm:[['Stock','cloruro de plomo(II)'],['Sistemática','dicloruro de plomo'],['Tradicional','cloruro plumboso']], ox:'Pb +2 · Cl −1'},
+{f:'AlCl3', c:'salb', nm:[['Stock','cloruro de aluminio'],['Sistemática','tricloruro de aluminio']], ox:'Al +3 · Cl −1', t:'Aunque es metal + no metal, tiene bastante carácter covalente (sublima hacia 180 °C).'},
+{f:'FeCl3', c:'salb', nm:[['Stock','cloruro de hierro(III)'],['Tradicional','cloruro férrico'],['Sistemática','tricloruro de hierro']], ox:'Fe +3 · Cl −1', t:'Se usa para atacar el cobre de los circuitos impresos.'},
+{f:'Na2S', c:'salb', nm:[['Stock','sulfuro de sodio'],['Tradicional','sulfuro sódico'],['Sistemática','sulfuro de disodio']], ox:'Na +1 · S −2'},
+{f:'NaF', c:'salb', nm:[['Stock','fluoruro de sodio'],['Tradicional','fluoruro sódico']], ox:'Na +1 · F −1', t:'Se añade a dentífricos.', x:'La hoja pone "Fluouro sódico": es "fluoruro".'},
+// ---- SUSTANCIAS SIMPLES ----
+{f:'O2', c:'elem', nm:[['Común','oxígeno'],['Sistemática','dioxígeno']], ox:'O 0', t:'En las sustancias simples el n.º de oxidación es siempre 0.'},
+{f:'O3', c:'elem', nm:[['Común','ozono'],['Sistemática','trioxígeno']], ox:'O 0', t:'Alótropo del oxígeno: mismo elemento, distinta molécula.'},
+{f:'H2', c:'elem', nm:[['Común','hidrógeno'],['Sistemática','dihidrógeno']], ox:'H 0'},
+{f:'N2', c:'elem', nm:[['Común','nitrógeno'],['Sistemática','dinitrógeno']], ox:'N 0', t:'≈78 % del aire. Triple enlace N≡N, muy estable.'},
+{f:'F2', c:'elem', nm:[['Común','flúor'],['Sistemática','diflúor']], ox:'F 0', t:'El elemento más electronegativo.', x:'La hoja pone "fluor": lleva tilde, "flúor" (palabra llana acabada en r).'},
+{f:'Cl2', c:'elem', nm:[['Común','cloro'],['Sistemática','dicloro']], ox:'Cl 0', t:'Gas amarillo verdoso.'},
+{f:'Br2', c:'elem', nm:[['Común','bromo'],['Sistemática','dibromo']], ox:'Br 0', t:'Único no metal líquido a temperatura ambiente.'},
+{f:'I2', c:'elem', nm:[['Común','yodo'],['Sistemática','diyodo'],['Variante','iodo']], ox:'I 0', t:'Diatómicos: H₂, N₂, O₂, F₂, Cl₂, Br₂, I₂.'},
+{f:'C', c:'elem', nm:[['Común','carbono']], ox:'C 0', t:'Se escribe sin subíndice (forma redes). Alótropos: grafito, diamante, fullerenos, grafeno.'},
+{f:'Al', c:'elem', nm:[['Común','aluminio']], ox:'Al 0', t:'Los metales se formulan solo con su símbolo.'},
+{f:'Hg', c:'elem', nm:[['Común','mercurio']], ox:'Hg 0', t:'Único metal líquido a temperatura ambiente.'},
+{f:'Ar', c:'elem', nm:[['Común','argón']], ox:'Ar 0', t:'Gas noble: monoatómico.'},
+// ---- IONES ----
+{f:'SO4^2-', c:'an', nm:[['Común','ion sulfato'],['Sistemática','tetraoxidosulfato(2−)']], ox:'S +6 · O −2', t:'Sale del ácido sulfúrico al perder 2 H⁺ → carga 2−.'},
+{f:'CO3^2-', c:'an', nm:[['Común','ion carbonato'],['Sistemática','trioxidocarbonato(2−)']], ox:'C +4 · O −2'},
+{f:'NO3^-', c:'an', nm:[['Común','ion nitrato'],['Sistemática','trioxidonitrato(1−)']], ox:'N +5 · O −2'},
+{f:'NO2^-', c:'an', nm:[['Común','ion nitrito'],['Sistemática','dioxidonitrato(1−)']], ox:'N +3 · O −2'},
+{f:'PO4^3-', c:'an', nm:[['Común','ion fosfato'],['Sistemática','tetraoxidofosfato(3−)']], ox:'P +5 · O −2', t:'{H3PO4} pierde 3 H⁺ → carga 3−.'},
+{f:'CN^-', c:'an', nm:[['Común','ion cianuro'],['Sistemática','nitrurocarbonato(1−)']], ox:'C +2 · N −3', t:'Pseudohaluro: se comporta como el Cl⁻.'},
+{f:'NH4^+', c:'cat', nm:[['Común','ion amonio'],['IUPAC','azanio']], ox:'N −3 · H +1', t:'{NH3} + {H^+} → {NH4^+}. En las sales hace el papel de un metal ({NH4Cl}, {NH4NO3}).'},
+{f:'S^2-', c:'an', nm:[['Común','ion sulfuro']], ox:'S −2'},
+{f:'Br^-', c:'an', nm:[['Común','ion bromuro']], ox:'Br −1'},
+{f:'I^-', c:'an', nm:[['Común','ion yoduro'],['Variante','ion ioduro']], ox:'I −1'},
+{f:'OH^-', c:'an', nm:[['Común','ion hidróxido']], ox:'O −2 · H +1', t:'Responsable del carácter básico de los hidróxidos.'},
+{f:'H^+', c:'cat', nm:[['Común','protón (ion hidrógeno)'],['IUPAC','hidrón']], ox:'H +1', t:'La IUPAC llama "hidrón" al H⁺ en general; "protón" es estrictamente el ¹H⁺. En agua no está libre: forma {H3O^+} (oxonio).'},
+{f:'Cl^-', c:'an', nm:[['Común','ion cloruro']], ox:'Cl −1'},
+// ---- ORGÁNICOS ----
+{f:'CH4', c:'org', s:'alcano', nm:[['IUPAC','metano']], ox:'C −4 · H +1', t:'Alcanos: C<sub>n</sub>H<sub>2n+2</sub>, solo enlaces simples, terminación -ano. Prefijos: met- (1 C), et- (2), prop- (3), but- (4).'},
+{f:'CH3-CH3', c:'org', s:'alcano', nm:[['IUPAC','etano']], a:['C2H6'], mf:'C2H6'},
+{f:'CH3-CH2-CH3', c:'org', s:'alcano', nm:[['IUPAC','propano']], a:['C3H8'], mf:'C3H8'},
+{f:'C4H10', c:'org', s:'alcano', nm:[['IUPAC','butano']], a:['CH3-CH2-CH2-CH3'], t:'Semidesarrollada: {CH3-CH2-CH2-CH3}.', x:'C₄H₁₀ es la fórmula de dos isómeros: butano (cadena lineal) y metilpropano (isobutano). "Butano" es el lineal.'},
+{f:'CH2=CH2', c:'org', s:'alqueno', nm:[['IUPAC','eteno (etileno)'],['Común','etileno']], a:['C2H4'], mf:'C2H4', t:'Alquenos: C<sub>n</sub>H<sub>2n</sub>, un doble enlace, terminación -eno. Hormona que madura la fruta.'},
+{f:'CH≡CH', c:'org', s:'alquino', nm:[['IUPAC','etino (acetileno)'],['Común','acetileno']], a:['C2H2'], mf:'C2H2', t:'Alquinos: C<sub>n</sub>H<sub>2n−2</sub>, triple enlace, terminación -ino. Soldadura oxiacetilénica.'},
+{f:'C3H6', c:'org', s:'alqueno', nm:[['IUPAC','propeno (propileno)'],['Común','propileno']], a:['CH2=CH-CH3','CH3-CH=CH2'], t:'Semidesarrollada: {CH2=CH-CH3}. Monómero del polipropileno.', x:'C₃H₆ también es la fórmula del ciclopropano; "propeno" sin ambigüedad es {CH2=CH-CH3}. La IUPAC lo llama propeno.'},
+{f:'C6H6', c:'org', s:'aromático', nm:[['IUPAC','benceno']], t:'Anillo de 6 C con electrones deslocalizados. Hidrocarburo aromático.'},
+{f:'C6H5CH3', c:'org', s:'aromático', nm:[['IUPAC','metilbenceno (tolueno)'],['Común','tolueno']], a:['C6H5-CH3','C7H8'], mf:'C7H8', t:'Un benceno con un grupo metilo (–CH₃) en lugar de un H.', x:'Se escribe junto: "metilbenceno" (la hoja pone "metil benceno").'},
+{f:'CH3OH', c:'org', s:'alcohol', nm:[['IUPAC','metanol'],['Común','alcohol metílico']], a:['CH4O'], t:'Alcoholes: grupo –OH, terminación -ol. El metanol es tóxico.'},
+{f:'CH3-CH2OH', c:'org', s:'alcohol', nm:[['IUPAC','etanol'],['Común','alcohol etílico']], a:['CH3CH2OH','C2H5OH','C2H6O','CH3-CH2-OH'], mf:'C2H6O', t:'El alcohol de las bebidas.'},
+{f:'HCOOH', c:'org', s:'ácido carboxílico', nm:[['IUPAC','ácido metanoico (fórmico)'],['Común','ácido fórmico']], a:['HCO2H','CH2O2','H-COOH'], t:'Grupo carboxilo –COOH, terminación -oico. Lo producen las hormigas (formica = hormiga).'},
+{f:'CH3COOH', c:'org', s:'ácido carboxílico', nm:[['IUPAC','ácido etanoico (acético)'],['Común','ácido acético']], a:['CH3CO2H','C2H4O2','CH3-COOH'], t:'El ácido del vinagre (≈5 %).'},
+];
+CARDS.forEach(c=>{ c.key=c.f; c.name=c.nm[0][1]; c.fam=famOf[c.c]; });
+const BYKEY = Object.fromEntries(CARDS.map(c=>[c.key,c]));
+
+/* ================= UTILIDADES ================= */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+function fmt(s){
+  const i=s.indexOf('^');
+  let main=i>=0?s.slice(0,i):s, ch=i>=0?s.slice(i+1):'';
+  main=esc(main).replace(/([A-Za-z\)])(\d+)/g,'$1<sub>$2</sub>').replace(/-/g,'–');
+  if(ch) main+='<sup>'+ch.replace('-','−')+'</sup>';
+  return main;
+}
+const rich = t=>t?t.replace(/\{([^}]+)\}/g,(_,f)=>'<span class="fx">'+fmt(f)+'</span>'):'';
+const shuffle = a=>{a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;};
+const elems = f=>new Set((f.match(/[A-Z][a-z]?/g)||[]));
+const deacc = s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const SUBD='₀₁₂₃₄₅₆₇₈₉', SUPD='⁰¹²³⁴⁵⁶⁷⁸⁹';
+function norm(s, org){
+  s=[...s].map(ch=>{ let k=SUBD.indexOf(ch); if(k>=0) return String(k); k=SUPD.indexOf(ch); if(k>=0) return String(k);
+    if(ch==='⁺') return '+'; if(ch==='⁻'||ch==='−'||ch==='–'||ch==='—') return '-'; if(ch==='#') return '≡'; return ch; }).join('');
+  s=s.replace(/[\s^·.]/g,'');
+  if(org) s=s.replace(/-/g,'');
+  return s;
+}
+const catStyle = c=>`--cc:var(--c-${c})`;
+const chip = card=>`<span class="chip" style="${catStyle(card.c)}">${CATS[card.c].n}${card.s?' · '+card.s:''}</span>`;
+
+/* ================= ESTADO Y GUARDADO ================= */
+const LS_KEY='fichas-formulacion-v1';
+const DEF={v:1, updated:0, prog:{}, settings:{dir:'f2n', hint:true, newPer:15, fams:FAMS.map(f=>f.k)}};
+const clone = o=>JSON.parse(JSON.stringify(o));
+function mergeState(s){ s=clone(s||{}); return {v:1, updated:s.updated||0, prog:s.prog||{}, settings:Object.assign(clone(DEF.settings), s.settings||{})}; }
+let state=mergeState(DEF);
+try{ const raw=localStorage.getItem(LS_KEY); if(raw) state=mergeState(JSON.parse(raw)); }catch(e){}
+let remoteRef=null, dirty=false, saveTimer=null, chain=Promise.resolve();
+function setSync(mode){ const el=$('#sync'); if(mode==='cuenta'){el.textContent='Guardado en tu cuenta'; el.classList.add('on');} else {el.textContent='Guardado en este navegador'; el.classList.remove('on');} }
+function save(){
+  state.updated=Date.now();
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+  dirty=true; clearTimeout(saveTimer); saveTimer=setTimeout(flush, 1500);
+}
+function flush(){
+  if(!remoteRef||!dirty) return;
+  dirty=false; const body=clone(state);
+  chain=chain.then(()=>remoteRef.set(body)).then(()=>setSync('cuenta')).catch(e=>{
+    if(e&&e.code==='unavailable'){ dirty=true; setTimeout(flush, 2500+Math.random()*2500); }
+    else { remoteRef=null; setSync('local'); }
+  });
+}
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') flush(); });
+async function initRemote(){
+  if(!window.claude||typeof window.claude.use!=='function') return;
+  try{
+    const [db,user]=await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    if(!db||!user) return;
+    const uid=await user.id(); if(!uid) return;
+    const ref=db.doc('data/users/'+uid+'/progreso');
+    const snap=await ref.get();
+    const r=snap.exists?snap.data():null;
+    const rUpd=(r&&r.updated)||0;
+    if(r&&r.v===1&&rUpd>state.updated){
+      state=mergeState(r);
+      try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+      resetSessions(); renderAll();
+    }
+    remoteRef=ref;
+    if(state.updated>rUpd){ dirty=true; flush(); } else setSync('cuenta');
+  }catch(e){ setSync('local'); }
+}
+
+/* ================= REPETICIÓN ESPACIADA (Leitner) ================= */
+const DAY=864e5, IV=[0,1,2,4,8,16];
+const P = k=>state.prog[k];
+const level = k=>{ const p=P(k); if(!p) return 'nueva'; if(p.b>=3) return 'dominada'; if(p.b>=2) return 'repasando'; return 'aprendiendo'; };
+function grade(k,g){
+  const now=Date.now(); const p=state.prog[k]||{b:0,seen:0,ok:0,ko:0,due:now};
+  p.seen++;
+  if(g===0){ p.b=0; p.ko++; p.due=now; }
+  else if(g===1){ p.b=Math.max(1,p.b); p.ok++; p.due=now+IV[p.b]*DAY*0.5; }
+  else { p.b=Math.min(5,p.b+1); p.ok++; p.due=now+IV[p.b]*DAY; }
+  state.prog[k]=p; save();
+}
+function markWrong(k){ const now=Date.now(); const p=state.prog[k]||{b:0,seen:0,ok:0,ko:0,due:now}; p.seen++; p.ko++; p.b=Math.max(0,p.b-1); p.due=now; state.prog[k]=p; save(); }
+function markRight(k){ const now=Date.now(); const p=state.prog[k]; if(!p){ state.prog[k]={b:1,seen:1,ok:1,ko:0,due:now+DAY*0.5}; } else { p.seen++; p.ok++; } save(); }
+
+/* ================= POOL / FILTROS ================= */
+const pool = ()=>CARDS.filter(c=>state.settings.fams.includes(c.fam));
+function renderFilters(){
+  const el=$('#filters'); const on=state.settings.fams;
+  el.innerHTML='<span class="lbl">Temas</span>'+FAMS.map(f=>{
+    const n=CARDS.filter(c=>c.fam===f.k).length;
+    return `<button class="chipbtn" data-fam="${f.k}" aria-pressed="${on.includes(f.k)}">${f.n} <span class="n">${n}</span></button>`;
+  }).join('')+`<button class="chipbtn" data-fam="*" aria-pressed="false">${on.length===FAMS.length?'Ninguno':'Todos'}</button>`;
+  el.hidden = (tab==='reglas');
+}
+$('#filters').addEventListener('click',e=>{
+  const b=e.target.closest('[data-fam]'); if(!b) return;
+  const k=b.dataset.fam; let on=state.settings.fams;
+  if(k==='*') on = on.length===FAMS.length?[]:FAMS.map(f=>f.k);
+  else on = on.includes(k)?on.filter(x=>x!==k):[...on,k];
+  state.settings.fams=on; save(); resetSessions(); renderFilters(); renderView();
+});
+
+function renderMeter(){
+  const p=pool(); const cnt={dominada:0,repasando:0,aprendiendo:0,nueva:0};
+  p.forEach(c=>cnt[level(c.key)]++);
+  const tot=p.length||1;
+  const seg=[['dominada','var(--ok)'],['repasando','var(--accent)'],['aprendiendo','var(--warn)']];
+  $('#meter').innerHTML=seg.map(([k,col])=>cnt[k]?`<i style="width:${cnt[k]/tot*100}%;background:${col}"></i>`:'').join('');
+  const now=Date.now(); const due=p.filter(c=>P(c.key)&&P(c.key).due<=now).length;
+  $('#legend').innerHTML=`<span style="--dot:var(--ok)">${cnt.dominada} dominadas</span><span style="--dot:var(--accent)">${cnt.repasando} repasando</span><span style="--dot:var(--warn)">${cnt.aprendiendo} aprendiendo</span><span style="--dot:var(--line)">${cnt.nueva} nuevas</span><span style="--dot:var(--bad)">${due} pendientes hoy</span>`;
+  $('#subtitle').textContent=`${p.length} de ${CARDS.length} fichas en los temas elegidos`;
+}
+
+/* ================= CARAS DE LA FICHA ================= */
+function backHTML(card, frontWasFormula){
+  const top = frontWasFormula
+    ? `<div class="namebig">${esc(card.name)}</div><span class="formula">${fmt(card.f)}</span>`
+    : `<span class="formula${card.f.length>9?' long':''}">${fmt(card.f)}</span><div class="namebig">${esc(card.name)}</div>`;
+  const names = card.nm.map(([t,n])=>`<dt>${esc(t)}</dt><dd>${esc(n)}</dd>`).join('');
+  return `<div class="facehead">${chip(card)}<span class="lvl">${levelLabel(card.key)}</span></div>
+    <div class="backtop">${top}</div>
+    <dl class="names">${names}${card.mf?`<dt>F. molecular</dt><dd class="fx">${fmt(card.mf)}</dd>`:''}</dl>
+    ${card.ox?`<div class="ox"><b>N.º oxidación</b> ${rich(card.ox)}</div>`:''}
+    <div class="note"><strong>${CATS[card.c].n}.</strong> ${rich(CATS[card.c].r)}${card.t?'<br><strong>Para recordarlo:</strong> '+rich(card.t):''}</div>
+    ${card.x?`<div class="fix"><strong>Corrección a la hoja:</strong> ${rich(card.x)}</div>`:''}`;
+}
+const levelLabel = k=>({nueva:'nueva',aprendiendo:'aprendiendo',repasando:'repasando',dominada:'dominada'})[level(k)];
+
+/* ================= PESTAÑAS ================= */
+let tab='repasar';
+try{ const t=localStorage.getItem(LS_KEY+'-tab'); if(t) tab=t; }catch(e){}
+if(location.hash && /^#(repasar|test|clasificar|escribir|lista|reglas)$/.test(location.hash)) tab=location.hash.slice(1);
+$('#tabs').addEventListener('click',e=>{
+  const b=e.target.closest('[data-tab]'); if(!b) return;
+  tab=b.dataset.tab; try{ localStorage.setItem(LS_KEY+'-tab',tab);}catch(e){}
+  renderAll();
+});
+function renderAll(){
+  document.querySelectorAll('#tabs [data-tab]').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===tab));
+  renderFilters(); renderMeter(); renderView();
+}
+function renderView(){
+  renderMeter();
+  ({repasar:renderRepasar, test:renderTest, clasificar:renderClasificar, escribir:renderEscribir, lista:renderLista, reglas:renderReglas})[tab]();
+}
+const emptyPool = ()=>`<section class="panel"><h2>No hay temas seleccionados</h2><p class="muted">Elige uno o varios temas arriba para empezar.</p></section>`;
+const seg = (name, cur, opts)=>`<div class="seg" role="group">${opts.map(([v,l])=>`<button data-${name}="${v}" aria-pressed="${cur===v}">${l}</button>`).join('')}</div>`;
+let sessions={};
+function resetSessions(){ sessions={}; }
+
+/* ---------- REPASAR ---------- */
+function buildRepaso(mode){
+  const p=pool(), now=Date.now(); let q;
+  if(mode==='libre') q=shuffle(p);
+  else {
+    const due=p.filter(c=>P(c.key)&&P(c.key).due<=now).sort((a,b)=>P(a.key).due-P(b.key).due);
+    const nuevas=shuffle(p.filter(c=>!P(c.key))).slice(0, state.settings.newPer);
+    q=[...due, ...nuevas];
+  }
+  return {mode, q:q.map(c=>({k:c.key, d:dirFor()})), i:0, flipped:false, res:[0,0,0], re:{}};
+}
+function dirFor(){ const d=state.settings.dir; return d==='mix'?(Math.random()<.5?'f2n':'n2f'):d; }
+function renderRepasar(){
+  const v=$('#view'); if(!pool().length){ v.innerHTML=emptyPool(); return; }
+  let s=sessions.rep; if(!s){ s=sessions.rep=buildRepaso(sessions.repMode||'smart'); }
+  const head=`<div class="bar">${seg('rmode', s.mode, [['smart','Inteligente'],['libre','Todas']])}${seg('dir', state.settings.dir, [['f2n','Fórmula → nombre'],['n2f','Nombre → fórmula'],['mix','Mezcla']])}</div>`;
+  if(s.i>=s.q.length){
+    const p=pool(), now=Date.now();
+    const left=p.filter(c=>!P(c.key)).length;
+    const next=p.filter(c=>P(c.key)&&P(c.key).due>now).sort((a,b)=>P(a.key).due-P(b.key).due)[0];
+    const done=s.q.length>0;
+    v.innerHTML=`<div class="rules">${head}<section class="panel">
+      <h2>${done?'Sesión terminada':'Todo al día'}</h2>
+      ${done?`<div class="summary"><div class="stat"><b>${s.res[2]}</b><span>Lo sabía</span></div><div class="stat"><b>${s.res[1]}</b><span>Dudé</span></div><div class="stat"><b>${s.res[0]}</b><span>No lo sabía</span></div></div>`:''}
+      <p class="muted">${left?`Te quedan ${left} fichas nuevas en estos temas.`:'Ya has visto todas las fichas de estos temas.'} ${next?`El próximo repaso toca ${whenText(P(next.key).due)}.`:''}</p>
+      <div class="row">${left?`<button class="primary" data-act="more">Aprender ${Math.min(left,state.settings.newPer)} nuevas</button>`:''}<button class="${left?'ghost':'primary'}" data-act="libre">Repasar todas igualmente</button></div>
+    </section></div>`;
+    return;
+  }
+  const it=s.q[s.i], card=BYKEY[it.k], f2n=it.d==='f2n', hint=state.settings.hint;
+  const front = f2n
+    ? `<div class="big"><span class="formula${card.f.length>9?' long':''}">${fmt(card.f)}</span></div><div class="hintline">¿Cómo se llama? · Toca para girar</div>`
+    : `<div class="big"><span class="namebig">${esc(card.name)}</span></div><div class="hintline">¿Cuál es su fórmula? · Toca para girar</div>`;
+  v.innerHTML=`<div class="rules">${head}
+    <div class="bar"><span class="count">${s.i+1} / ${s.q.length}${s.mode==='smart'?' · repaso inteligente':''}</span><span class="count">${levelLabel(card.key)}</span></div>
+    <div class="progress"><i style="width:${s.i/s.q.length*100}%"></i></div>
+    <div class="stage"><div class="card${s.flipped?' flipped':''}" id="card" role="button" tabindex="0" aria-label="Girar ficha">
+      <div class="inner">
+        <div class="face front${hint?'':' nohint'}" style="${catStyle(card.c)}"><div class="facehead">${hint?chip(card):'<span></span>'}<span></span></div>${front}</div>
+        <div class="face back">${backHTML(card,f2n)}</div>
+      </div></div></div>
+    <div class="grades" id="grades" ${s.flipped?'':'hidden'}>
+      <button class="gbtn g0" data-g="0">No lo sabía<small>otra vez · 1</small></button>
+      <button class="gbtn g1" data-g="1">Dudé<small>pronto · 2</small></button>
+      <button class="gbtn g2" data-g="2">Lo sabía<small>${nextGap(card.key)} · 3</small></button>
+    </div>
+    <p class="hintline" ${s.flipped?'hidden':''} id="fliphint">Piensa la respuesta antes de girar. Teclado: espacio para girar, 1-2-3 para puntuar.</p>
+  </div>`;
+}
+function nextGap(k){ const p=P(k); const b=Math.min(5,(p?p.b:0)+1); const d=IV[b]; return d===1?'en 1 día':`en ${d} días`; }
+function whenText(t){ const d=Math.round((t-Date.now())/DAY*2)/2; if(d<=0.5) return 'en unas horas'; if(d<=1) return 'mañana'; return `en ${Math.ceil(d)} días`; }
+function flip(){
+  const s=sessions.rep; if(!s||s.i>=s.q.length) return;
+  s.flipped=!s.flipped;
+  $('#card').classList.toggle('flipped', s.flipped);
+  $('#grades').hidden=!s.flipped; $('#fliphint').hidden=s.flipped;
+}
+function doGrade(g){
+  const s=sessions.rep; if(!s||!s.flipped) return;
+  const it=s.q[s.i]; grade(it.k,g); s.res[g]++;
+  if(g===0 && (s.re[it.k]||0)<2){ s.re[it.k]=(s.re[it.k]||0)+1; s.q.splice(Math.min(s.q.length, s.i+4),0,{k:it.k,d:it.d}); }
+  s.i++; s.flipped=false; renderView();
+}
+
+/* ---------- TEST ---------- */
+function distractors(card, n, field){
+  const E=elems(card.f);
+  const cands=CARDS.filter(c=>c!==card && c[field]!==card[field]).map(c=>{
+    let sc=Math.random()*1.5; if(c.c===card.c) sc+=3; else if(c.fam===card.fam) sc+=1.5;
+    for(const e of elems(c.f)) if(E.has(e)) sc+=1;
+    return [sc,c];
+  }).sort((a,b)=>b[0]-a[0]);
+  const out=[], seen=new Set([card[field]]);
+  for(const [,c] of cands){ if(seen.has(c[field])) continue; seen.add(c[field]); out.push(c); if(out.length>=n) break; }
+  return out;
+}
+function weakFirst(list, n){
+  return list.map(c=>{ const p=P(c.key); const w=p?(p.b*1.2 - p.ko*0.5):1.5; return [w+Math.random()*2.5,c]; }).sort((a,b)=>a[0]-b[0]).slice(0,n).map(x=>x[1]);
+}
+function buildTest(){
+  const qs=weakFirst(pool(), Math.min(10,pool().length)).map(card=>{
+    const d=dirFor(), field=d==='f2n'?'name':'f';
+    return {k:card.key, d, opts:shuffle([card, ...distractors(card,3,field)]).map(c=>c.key), pick:null};
+  });
+  return {qs, i:0, score:0, miss:[]};
+}
+function renderTest(){
+  const v=$('#view'); if(!pool().length){ v.innerHTML=emptyPool(); return; }
+  let s=sessions.test||(sessions.test=buildTest());
+  const head=`<div class="bar">${seg('dir', state.settings.dir, [['f2n','Fórmula → nombre'],['n2f','Nombre → fórmula'],['mix','Mezcla']])}<span class="count">Aciertos ${s.score} / ${s.qs.length}</span></div>`;
+  if(s.i>=s.qs.length){ v.innerHTML=`<div class="rules">${head}${summaryPanel('Test terminado', s.score, s.qs.length, s.miss, 'newtest')}</div>`; return; }
+  const q=s.qs[s.i], card=BYKEY[q.k], f2n=q.d==='f2n';
+  const opts=q.opts.map((k,j)=>{ const c=BYKEY[k]; let cls='opt'+(f2n?'':' f');
+    if(q.pick){ if(k===q.k) cls+=' right'; else if(k===q.pick) cls+=' wrong'; }
+    return `<button class="${cls}" data-opt="${esc(k)}" ${q.pick?'disabled':''}>${f2n?`<span class="k">${j+1}</span>${esc(c.name)}`:fmt(c.f)}</button>`; }).join('');
+  const fb = q.pick ? `<div class="verdict ${q.pick===q.k?'ok':'bad'}">${q.pick===q.k?'Correcto':'No: era la marcada en verde'}</div>
+    <div class="face" style="min-height:0;box-shadow:none">${backHTML(card,f2n)}</div>
+    <div class="row"><button class="primary" data-act="tnext">${s.i+1<s.qs.length?'Siguiente':'Ver resultado'}</button></div>` : '';
+  v.innerHTML=`<div class="rules">${head}<div class="progress"><i style="width:${s.i/s.qs.length*100}%"></i></div>
+    <section class="panel"><div class="prompt"><span class="count">Pregunta ${s.i+1} de ${s.qs.length} · ${f2n?'elige el nombre':'elige la fórmula'}</span>
+      ${f2n?`<span class="formula${card.f.length>9?' long':''}">${fmt(card.f)}</span>`:`<span class="namebig">${esc(card.name)}</span>`}</div>
+      <div class="opts">${opts}</div>${fb}</section></div>`;
+}
+function summaryPanel(title, ok, tot, miss, act){
+  const pct=tot?Math.round(ok/tot*100):0;
+  return `<section class="panel"><h2>${title}</h2>
+    <div class="summary"><div class="stat"><b>${ok}/${tot}</b><span>aciertos</span></div><div class="stat"><b>${pct} %</b><span>${pct>=90?'muy bien':pct>=60?'vas bien':'a repasar'}</span></div></div>
+    ${miss.length?`<h3>Para repasar</h3><div class="misslist">${miss.map(k=>{const c=BYKEY[k]; return `<button class="miss" data-detail="${esc(k)}"><span class="fx">${fmt(c.f)}</span>${esc(c.name)}</button>`;}).join('')}</div><p class="muted">Las falladas pasan a "pendientes" en Repasar.</p>`:''}
+    <div class="row"><button class="primary" data-act="${act}">Otra ronda</button></div></section>`;
+}
+
+/* ---------- CLASIFICAR ---------- */
+function buildClas(){ return {qs:shuffle(pool()).slice(0,Math.min(12,pool().length)).map(c=>({k:c.key,pick:null})), i:0, score:0, miss:[]}; }
+function renderClasificar(){
+  const v=$('#view'); if(!pool().length){ v.innerHTML=emptyPool(); return; }
+  let s=sessions.clas||(sessions.clas=buildClas());
+  const head=`<div class="bar"><span class="count">¿Qué tipo de compuesto es? Las preguntas salen de los temas elegidos; puedes responder con cualquier tipo.</span><span class="count">Aciertos ${s.score} / ${s.qs.length}</span></div>`;
+  if(s.i>=s.qs.length){ v.innerHTML=`<div class="rules">${head}${summaryPanel('Clasificación terminada', s.score, s.qs.length, s.miss, 'newclas')}</div>`; return; }
+  const q=s.qs[s.i], card=BYKEY[q.k];
+  const grid=FAMS.map(f=>`<div class="catfam"><span class="fam">${f.n}</span>${f.cats.map(c=>{
+    let cls='catbtn'; if(q.pick){ if(c===card.c) cls+=' right'; else if(c===q.pick) cls+=' wrong'; }
+    return `<button class="${cls}" style="${catStyle(c)}" data-cat="${c}" ${q.pick?'disabled':''}>${CATS[c].n}</button>`;}).join('')}</div>`).join('');
+  const fb = q.pick ? `<div class="verdict ${q.pick===card.c?'ok':'bad'}">${q.pick===card.c?'Correcto':'Es '+CATS[card.c].n.toLowerCase()}</div>
+    <div class="note"><strong>${CATS[card.c].n}:</strong> ${rich(CATS[card.c].r)}${q.pick!==card.c?`<br><strong>${CATS[q.pick].n}</strong> sería: ${rich(CATS[q.pick].r)}`:''}</div>
+    <div class="note"><strong>${esc(card.name)}.</strong> ${rich(card.t||'')}</div>
+    ${card.x?`<div class="fix"><strong>Corrección a la hoja:</strong> ${rich(card.x)}</div>`:''}
+    <div class="row"><button class="primary" data-act="cnext">${s.i+1<s.qs.length?'Siguiente':'Ver resultado'}</button></div>`:'';
+  v.innerHTML=`<div class="rules">${head}<div class="progress"><i style="width:${s.i/s.qs.length*100}%"></i></div>
+    <section class="panel"><div class="prompt"><span class="count">${s.i+1} de ${s.qs.length}</span><span class="formula${card.f.length>9?' long':''}">${fmt(card.f)}</span></div>
+    <div class="catgrid">${grid}</div>${fb}</section></div>`;
+}
+
+/* ---------- ESCRIBIR ---------- */
+function buildWrite(){ return {qs:weakFirst(pool(), Math.min(10,pool().length)).map(c=>({k:c.key,ans:null,ok:null,hint:false})), i:0, score:0, miss:[]}; }
+function renderEscribir(){
+  const v=$('#view'); if(!pool().length){ v.innerHTML=emptyPool(); return; }
+  let s=sessions.write||(sessions.write=buildWrite());
+  const head=`<div class="bar"><span class="count">Escribe la fórmula con números normales: Na2O, Ca(OH)2, SO4 2-. Respeta mayúsculas (Co ≠ CO).</span><span class="count">Aciertos ${s.score} / ${s.qs.length}</span></div>`;
+  if(s.i>=s.qs.length){ v.innerHTML=`<div class="rules">${head}${summaryPanel('Ronda terminada', s.score, s.qs.length, s.miss, 'newwrite')}</div>`; return; }
+  const q=s.qs[s.i], card=BYKEY[q.k];
+  const fb = q.ok!==null ? `<div class="verdict ${q.ok?'ok':'bad'}">${q.ok?'Correcto':'Era <span class="fx">'+fmt(card.f)+'</span>'}</div>
+    <div class="face" style="min-height:0;box-shadow:none">${backHTML(card,false)}</div>
+    <div class="row"><button class="primary" data-act="wnext">${s.i+1<s.qs.length?'Siguiente':'Ver resultado'}</button></div>`:'';
+  v.innerHTML=`<div class="rules">${head}<div class="progress"><i style="width:${s.i/s.qs.length*100}%"></i></div>
+    <section class="panel"><div class="prompt"><span class="count">${s.i+1} de ${s.qs.length}</span><span class="namebig">${esc(card.name)}</span>
+      ${q.hint?`<div>${chip(card)}</div><div class="ox"><b>N.º oxidación</b> ${rich(card.ox)}</div>`:''}</div>
+      <form class="writebox" id="wform" autocomplete="off"><input id="winput" type="text" inputmode="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Fórmula" value="${esc(q.ans||'')}" ${q.ok!==null?'disabled':''}><button class="primary" type="submit" ${q.ok!==null?'disabled':''}>Comprobar</button></form>
+      <div class="preview" id="wprev">${q.ans?fmt(toNotation(q.ans)):'&nbsp;'}</div>
+      ${q.ok===null?`<div class="keys">${['(',')','2','3','4','+','-','=','≡'].map(k=>`<button type="button" data-key="${esc(k)}">${esc(k)}</button>`).join('')}</div>
+      <div class="row" style="justify-content:center">${q.hint?'':'<button class="ghost" data-act="whint">Pista</button>'}<button class="ghost" data-act="wskip">No lo sé</button></div>`:''}
+      ${fb}</section></div>`;
+  const inp=$('#winput'); if(inp && q.ok===null){ inp.addEventListener('input',()=>{ q.ans=inp.value; $('#wprev').innerHTML=inp.value?fmt(toNotation(inp.value)):'&nbsp;'; }); }
+}
+function toNotation(s){ // vista previa: "SO4 2-" o "NO3-" → carga en superíndice
+  const t=s.trim(); let m=t.match(/^(.*?)(?:\s+|\^)(\d*[+-])$/);
+  if(m) return norm(m[1],false)+'^'+m[2];
+  m=norm(t,false).match(/^(.*[A-Za-z\)])([+-])$/);
+  if(m && !/[=≡]/.test(t)) return m[1]+'^'+m[2];
+  return norm(t,false);
+}
+function checkWrite(){
+  const s=sessions.write, q=s.qs[s.i], card=BYKEY[q.k];
+  const raw=($('#winput').value||'').trim(); if(!raw) return;
+  q.ans=raw; const org=card.c==='org';
+  const targets=[card.f, ...(card.a||[]), ...(card.mf?[card.mf]:[])].map(t=>norm(t,org));
+  q.ok=targets.includes(norm(raw,org));
+  if(q.ok){ s.score++; markRight(card.key);} else { s.miss.push(card.key); markWrong(card.key); }
+  renderView();
+}
+
+/* ---------- LISTA ---------- */
+let listQuery='';
+function renderLista(){
+  const v=$('#view'); const p=pool();
+  if(!p.length){ v.innerHTML=emptyPool(); return; }
+  if(!$('#lsearch')){
+    v.innerHTML=`<div class="rules"><input class="search" id="lsearch" type="search" placeholder="Buscar fórmula o nombre (p. ej. sulfato, Fe, anhídrido)" value="${esc(listQuery)}"><div id="lgroups" class="rules"></div></div>`;
+    $('#lsearch').addEventListener('input',e=>{ listQuery=e.target.value; renderListGroups(); });
+  }
+  renderListGroups();
+}
+function renderListGroups(){
+  const q=deacc(listQuery.trim()); const qn=norm(listQuery.trim(),true).toLowerCase();
+  const match=c=>!q || deacc(c.nm.map(x=>x[1]).join(' | ')).includes(q) || norm(c.f,true).toLowerCase().includes(qn) || deacc(CATS[c.c].n).includes(q);
+  const p=pool().filter(match);
+  const order=FAMS.flatMap(f=>f.cats);
+  const html=order.map(cat=>{
+    const items=p.filter(c=>c.c===cat); if(!items.length) return '';
+    return `<section class="group" style="${catStyle(cat)}"><div class="ghead"><h3>${CATS[cat].n} <span class="count">${items.length}</span></h3><p>${rich(CATS[cat].r)}</p></div>
+      ${items.map(c=>{ const p=P(c.key); const b=p?Math.min(4,p.b):0;
+        return `<button class="item${c.x?' flag':''}" data-detail="${esc(c.key)}"><span class="fx">${fmt(c.f)}</span><span class="nm">${esc(c.name)}${c.nm.length>1?`<small>${esc(c.nm.slice(1).map(x=>x[1]).join(' · '))}</small>`:''}</span><span class="dots" title="${levelLabel(c.key)}">${[1,2,3,4].map(i=>`<i class="${b>=i?'on':''}"></i>`).join('')}</span></button>`; }).join('')}
+    </section>`; }).join('');
+  $('#lgroups').innerHTML = html || '<p class="muted">Nada coincide con la búsqueda.</p>';
+}
+
+/* ---------- REGLAS ---------- */
+function renderReglas(){
+  const legend=FAMS.flatMap(f=>f.cats).map(c=>`<div><span class="chip" style="${catStyle(c)}">${CATS[c].n}</span></div>`).join('');
+  const fixes=CARDS.filter(c=>c.x).map(c=>`<li><span class="fx">${fmt(c.f)}</span>: ${rich(c.x)}</li>`).join('');
+  $('#view').innerHTML=rich(`<div class="rules">
+  <section class="panel"><h2>Cómo saber qué tipo es</h2>
+    <p class="muted">Hazte estas preguntas en orden. La primera que se cumpla te da el tipo.</p>
+    <ol class="steps">
+      <li><strong>¿Tiene carga?</strong> → ion. Positiva: catión ({NH4^+}). Negativa: anión ({SO4^2-}).</li>
+      <li><strong>¿Un solo elemento?</strong> → sustancia simple ({O3}, {Hg}).</li>
+      <li><strong>¿Es una cadena de C con H?</strong> → orgánico. Excepciones inorgánicas: {CO}, {CO2}, {H2CO3}, carbonatos, {HCN} y cianuros.</li>
+      <li><strong>¿Empieza por H?</strong> → ácido.
+        <ul><li>Sin O ({HCl}, {H2S}, {HCN}) → hidrácido.</li><li>Con O ({HNO3}, {H2SO4}) → oxácido.</li><li>Excepción: {H2O2} es un peróxido.</li></ul></li>
+      <li><strong>¿Acaba en OH?</strong> → hidróxido ({NaOH}, {Fe(OH)3}).</li>
+      <li><strong>¿Solo dos elementos?</strong>
+        <ul><li>X + O → óxido. Metal con n.º ox. bajo: básico. No metal, o metal con +6/+7: ácido. Al, Zn, Pb, Ti, Mn(IV): anfótero. {CO}, {NO}, {N2O}: neutros.</li>
+        <li>Si el oxígeno va en pareja ({Na2O2}, {H2O2}) → peróxido.</li>
+        <li>N o P con H ({NH3}, {PH3}) → hidruro.</li>
+        <li>Metal + no metal ({NaCl}, {FeCl3}) → sal binaria.</li>
+        <li>No metal + no metal ({PCl3}) → binario covalente.</li></ul></li>
+      <li><strong>Metal (o {NH4^+}) + oxoanión</strong> → oxisal ({KNO3}). Si al anión le queda algún H ({NaHCO3}, {CaHPO4}, {NaHS}) → sal ácida.</li>
+    </ol>
+  </section>
+  <section class="panel"><h2>Prefijos y sufijos de oxácidos y sales</h2>
+    <div class="tw"><table><thead><tr><th>N.º oxidación</th><th>Ácido</th><th>Anión / sal</th><th>Ejemplo con Cl</th></tr></thead><tbody>
+      <tr><td>el más bajo</td><td>hipo…oso</td><td>hipo…ito</td><td>{HClO} hipocloroso → {ClO^-} hipoclorito (+1)</td></tr>
+      <tr><td>bajo</td><td>…oso</td><td>…ito</td><td>{HClO2} cloroso → clorito (+3)</td></tr>
+      <tr><td>alto</td><td>…ico</td><td>…ato</td><td>{HClO3} clórico → clorato (+5)</td></tr>
+      <tr><td>el más alto</td><td>per…ico</td><td>per…ato</td><td>{HClO4} perclórico → perclorato (+7)</td></tr>
+      <tr><td>hidrácido</td><td>…hídrico</td><td>…uro</td><td>{HCl} clorhídrico → cloruro</td></tr>
+    </tbody></table></div>
+    <div class="mnemo">"Cuando el oso toca el pito, Perico toca el silbato."<br><span class="muted" style="font-size:15px">oso → ito · ico → ato</span></div>
+    <p>Con metales de dos n.º de oxidación, la tradicional usa <strong>…oso</strong> para el menor y <strong>…ico</strong> para el mayor: Fe²⁺ ferroso / Fe³⁺ férrico, Cu⁺ cuproso / Cu²⁺ cúprico, Pb²⁺ plumboso / Pb⁴⁺ plúmbico.</p>
+  </section>
+  <section class="panel"><h2>Las tres nomenclaturas</h2>
+    <div class="tw"><table><thead><tr><th>Fórmula</th><th>Sistemática</th><th>Stock</th><th>Tradicional</th></tr></thead><tbody>
+      <tr><td>{Fe2O3}</td><td>trióxido de dihierro</td><td>óxido de hierro(III)</td><td>óxido férrico</td></tr>
+      <tr><td>{SO3}</td><td>trióxido de azufre</td><td>óxido de azufre(VI)</td><td>anhídrido sulfúrico</td></tr>
+      <tr><td>{CuO}</td><td>monóxido de cobre</td><td>óxido de cobre(II)</td><td>óxido cúprico</td></tr>
+    </tbody></table></div>
+    <p><strong>Sistemática:</strong> prefijos mono- (1), di- (2), tri- (3), tetra- (4), penta- (5), hexa- (6), hepta- (7). "Mono" se suele omitir salvo para evitar ambigüedad (monóxido de carbono).</p>
+    <p><strong>Stock:</strong> el n.º de oxidación en romanos, pegado al nombre: hierro(III). Si el elemento solo tiene uno, no se pone: óxido de sodio.</p>
+    <p><strong>Tradicional:</strong> la IUPAC ya no admite los "anhídridos", pero siguen apareciendo en clase y ayudan a ver de qué ácido salen.</p>
+  </section>
+  <section class="panel"><h2>Cómo montar una fórmula: cruce de cargas</h2>
+    <p class="eq">Ca²⁺ + {PO4^3-} → {Ca3(PO4)2} &nbsp; porque 3·(+2) + 2·(−3) = 0</p>
+    <p class="eq">Al³⁺ + {H2PO4^-} → {Al(H2PO4)3}</p>
+    <p class="eq">Fe³⁺ + {NO3^-} → {Fe(NO3)3}</p>
+    <p class="muted">El paréntesis va cuando hay más de un ion poliatómico. Los subíndices se simplifican, salvo en peróxidos ({Na2O2}) y moléculas como {N2O4}.</p>
+  </section>
+  <section class="panel"><h2>Reacciones que unen los tipos</h2>
+    <p class="eq">óxido básico + agua → hidróxido: &nbsp;{Na2O} + {H2O} → 2 {NaOH}</p>
+    <p class="eq">óxido ácido + agua → oxácido: &nbsp;{SO3} + {H2O} → {H2SO4}</p>
+    <p class="eq">ácido + hidróxido → sal + agua: &nbsp;{HCl} + {NaOH} → {NaCl} + {H2O}</p>
+    <p class="eq">oxácido sin sus H → anión: &nbsp;{H2SO4} → {SO4^2-} + 2 {H^+}</p>
+  </section>
+  <section class="panel"><h2>Números de oxidación que salen en la hoja</h2>
+    <div class="tw"><table><thead><tr><th>Elementos</th><th>N.º de oxidación</th></tr></thead><tbody>
+      <tr><td>Na, K, Ag</td><td>+1</td></tr>
+      <tr><td>Mg, Ca, Zn</td><td>+2</td></tr>
+      <tr><td>Al</td><td>+3</td></tr>
+      <tr><td>Cu, Hg</td><td>+1, +2</td></tr>
+      <tr><td>Fe, Ni</td><td>+2, +3</td></tr>
+      <tr><td>Pb</td><td>+2, +4</td></tr>
+      <tr><td>Ti</td><td>+4 (también +2, +3)</td></tr>
+      <tr><td>Cr</td><td>+2, +3 (como metal) · +6 (cromatos, dicromatos)</td></tr>
+      <tr><td>Mn</td><td>+2, +3 (como metal) · +4 · +6, +7 (manganatos, permanganatos)</td></tr>
+      <tr><td>H</td><td>+1 (−1 en hidruros metálicos)</td></tr>
+      <tr><td>O</td><td>−2 (−1 en peróxidos)</td></tr>
+      <tr><td>F</td><td>−1</td></tr>
+      <tr><td>Cl, Br, I</td><td>−1 · +1, +3, +5, +7</td></tr>
+      <tr><td>S</td><td>−2 · +4, +6 (también +2)</td></tr>
+      <tr><td>N</td><td>−3 · +1 a +5</td></tr>
+      <tr><td>P, As</td><td>−3 · +3, +5</td></tr>
+      <tr><td>C</td><td>−4 · +2, +4</td></tr>
+    </tbody></table></div>
+  </section>
+  <section class="panel"><h2>Código de colores</h2>
+    <p class="muted">Básicos en azul y ácidos en rojo, como el papel tornasol. Los anfóteros, que hacen de las dos cosas, en violeta.</p>
+    <div class="legendgrid">${legend}</div>
+  </section>
+  <section class="panel"><h2>Correcciones a la hoja</h2>
+    <p class="muted">He contrastado cada fórmula y nombre de tu hoja. Las fórmulas están todas bien; esto es lo que conviene matizar:</p>
+    <ul class="fixlist">${fixes}
+      <li>{NH4OH}: no existe como compuesto aislado; es amoníaco disuelto en agua.</li>
+      <li>{H3PO3}: aunque tenga 3 H, es diprótico.</li>
+      <li>{H^+}: la IUPAC lo llama "hidrón"; "protón" es estrictamente el ¹H⁺.</li>
+      <li>{KOH}: lo preciso es "potasa cáustica".</li>
+      <li>Stock: la IUPAC escribe el número pegado, "hierro(III)", sin espacio.</li>
+      <li>"(ac)" en los hidrácidos significa "en disolución acuosa": solo entonces se llaman ácido …hídrico.</li>
+    </ul>
+  </section>
+  </div>`);
+}
+
+/* ================= DETALLE / AJUSTES ================= */
+function openSheet(html){
+  const o=$('#overlay'); o.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><button class="iconbtn close" data-act="close" aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>${html}</div>`;
+  o.hidden=false;
+}
+function closeSheet(){ $('#overlay').hidden=true; $('#overlay').innerHTML=''; }
+$('#overlay').addEventListener('click',e=>{
+  if(e.target.id==='overlay'||e.target.closest('[data-act="close"]')) return closeSheet();
+  const a=e.target.closest('[data-act]'); if(!a) return;
+  if(a.dataset.act==='reset1'){ a.closest('.row').innerHTML='<span class="muted">Se borrará todo tu progreso.</span><button class="ghost" data-act="close">Cancelar</button><button class="primary" style="background:var(--bad)" data-act="reset2">Borrar progreso</button>'; }
+  if(a.dataset.act==='reset2'){ state.prog={}; save(); resetSessions(); closeSheet(); renderAll(); }
+});
+$('#overlay').addEventListener('change',e=>{
+  if(e.target.id==='sHint'){ state.settings.hint=e.target.checked; save(); renderView(); }
+  if(e.target.id==='sNew'){ state.settings.newPer=+e.target.value; save(); resetSessions(); renderView(); }
+});
+$('#openSettings').addEventListener('click',()=>{
+  openSheet(`<h2 style="margin:0;font-family:var(--font-display)">Ajustes</h2>
+    <label class="set" for="sHint"><span>Mostrar el tipo (color) en el anverso de la ficha<br><small class="muted">Desactívalo para practicar sin pista.</small></span><input type="checkbox" id="sHint" ${state.settings.hint?'checked':''}></label>
+    <label class="set" for="sNew"><span>Fichas nuevas por sesión</span><select id="sNew" style="font:inherit;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink)">${[5,10,15,20,30,200].map(n=>`<option value="${n}" ${state.settings.newPer===n?'selected':''}>${n===200?'Todas':n}</option>`).join('')}</select></label>
+    <div class="note"><strong>Cómo funciona el repaso inteligente.</strong> Cada ficha sube de caja cuando la sabes y vuelve a la primera cuando fallas. Las cajas se repasan a los 1, 2, 4, 8 y 16 días. "Dominada" significa que aguanta 4 días o más sin olvidarse.</div>
+    <div class="note"><strong>En el iPad:</strong> abre esta página en Safari y usa Compartir → "Añadir a pantalla de inicio" para tenerla como una app.</div>
+    <div class="row"><button class="ghost" data-act="reset1">Borrar progreso…</button></div>`);
+});
+
+/* ================= EVENTOS GLOBALES ================= */
+$('#view').addEventListener('click',e=>{
+  const t=e.target;
+  if(t.closest('#card')) return flip();
+  const g=t.closest('[data-g]'); if(g) return doGrade(+g.dataset.g);
+  const rm=t.closest('[data-rmode]'); if(rm){ sessions.repMode=rm.dataset.rmode; sessions.rep=buildRepaso(sessions.repMode); return renderView(); }
+  const d=t.closest('[data-dir]'); if(d){ state.settings.dir=d.dataset.dir; save(); delete sessions.rep; delete sessions.test; return renderView(); }
+  const det=t.closest('[data-detail]'); if(det){ const c=BYKEY[det.dataset.detail]; return openSheet(`<div class="face" style="min-height:0;box-shadow:none;border:0;padding:0">${backHTML(c,false)}</div>`); }
+  const o=t.closest('[data-opt]'); if(o){ const s=sessions.test, q=s.qs[s.i]; if(q.pick) return; q.pick=o.dataset.opt;
+    if(q.pick===q.k){ s.score++; markRight(q.k);} else { s.miss.push(q.k); markWrong(q.k);} return renderView(); }
+  const c=t.closest('[data-cat]'); if(c){ const s=sessions.clas, q=s.qs[s.i]; if(q.pick) return; q.pick=c.dataset.cat;
+    if(q.pick===BYKEY[q.k].c) s.score++; else s.miss.push(q.k); return renderView(); }
+  const key=t.closest('[data-key]'); if(key){ const inp=$('#winput'); const k=key.dataset.key; const st=inp.selectionStart??inp.value.length, en=inp.selectionEnd??inp.value.length; inp.value=inp.value.slice(0,st)+k+inp.value.slice(en); inp.focus(); inp.setSelectionRange(st+k.length,st+k.length); inp.dispatchEvent(new Event('input')); return; }
+  const a=t.closest('[data-act]'); if(!a) return;
+  const act=a.dataset.act;
+  if(act==='more'){ sessions.repMode='smart'; sessions.rep=buildRepaso('smart'); }
+  if(act==='libre'){ sessions.repMode='libre'; sessions.rep=buildRepaso('libre'); }
+  if(act==='tnext') sessions.test.i++;
+  if(act==='newtest') sessions.test=buildTest();
+  if(act==='cnext') sessions.clas.i++;
+  if(act==='newclas') sessions.clas=buildClas();
+  if(act==='wnext') sessions.write.i++;
+  if(act==='newwrite') sessions.write=buildWrite();
+  if(act==='whint') sessions.write.qs[sessions.write.i].hint=true;
+  if(act==='wskip'){ const s=sessions.write, q=s.qs[s.i]; q.ans=$('#winput').value; q.ok=false; s.miss.push(q.k); markWrong(q.k); }
+  renderView();
+  if(act==='wnext'||act==='newwrite'){ const i=$('#winput'); if(i) i.focus(); }
+});
+$('#view').addEventListener('submit',e=>{ if(e.target.id==='wform'){ e.preventDefault(); checkWrite(); } });
+document.addEventListener('keydown',e=>{
+  if(!$('#overlay').hidden){ if(e.key==='Escape') closeSheet(); return; }
+  if(e.target.matches('input,select,textarea')) return;
+  if(tab==='repasar'){
+    if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); }
+    else if(['1','2','3'].includes(e.key)) doGrade(+e.key-1);
+  } else if(tab==='test'){
+    const s=sessions.test; if(!s||s.i>=s.qs.length) return; const q=s.qs[s.i];
+    if(!q.pick && ['1','2','3','4'].includes(e.key)){ const b=document.querySelectorAll('[data-opt]')[+e.key-1]; if(b) b.click(); }
+    else if(q.pick && e.key==='Enter'){ e.preventDefault(); s.i++; renderView(); }
+  } else if(tab==='clasificar' || tab==='escribir'){
+    if(e.key==='Enter'){ const b=document.querySelector('[data-act="cnext"],[data-act="wnext"]'); if(b){ e.preventDefault(); b.click(); } }
+  }
+});
+
+renderAll();
+initRemote();
+</script>
+<script>if('serviceWorker' in navigator && location.protocol==='https:'){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}</script>
+</body></html>

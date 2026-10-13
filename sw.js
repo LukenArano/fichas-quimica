@@ -1,6 +1,8 @@
 // Modo sin conexión: guarda la app y las tipografías la primera vez que se abre.
-const CACHE = 'fichas-v2';
-const CORE = ['./', './index.html', './acido-base.html', './equilibrio.html', './estudio.css', './estudio.js', './ab-data.js', './eq-data.js', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
+const CACHE = 'kimika-v3';
+const CORE = ['./', './index.html', './formulacion.html', './tema.html', './azterketak.html', './acido-base.html', './equilibrio.html',
+  './estudio.css', './estudio.js', './kimika.js', './lab.js', './t-oreka.js', './az-data.js', './az-sol.js', './zuzenketak.js', './ab-data.js', './eq-data.js',
+  './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

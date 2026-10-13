@@ -1,0 +1,167 @@
+<!doctype html><html lang="eu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png"><meta name="theme-color" content="#0E6C76"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Kimika"><title>Kimika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="estudio.css">
+<style>[hidden]{display:none!important}body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head><body>
+<div class="app" id="app"></div>
+<script src="estudio.js"></script>
+<script src="kimika.js"></script>
+<script src="lab.js"></script>
+<script>
+(function(){
+const E=Estudio, K=Kimika, L=E.L, $=E.$, b=E.b;
+const tid=(new URLSearchParams(location.search).get('t'))||'oreka';
+const meta=K.byId(tid)||K.TOPICS[1];
+const s=document.createElement('script'); s.src='t-'+meta.id+'.js';
+s.onload=init; s.onerror=()=>{ $('#app').innerHTML='<p>No se pudo cargar el tema.</p>'; };
+document.body.appendChild(s);
+
+function init(){
+const D=K.get(meta.id), U=D.units;
+const store=K.store(meta.id);
+const done=id=>!!(store.st.units[id]&&store.st.units[id].done);
+const unlocked=i=>store.st.open||i===0||done(U[i-1].id);
+const TX={
+  ruta:b('Ruta','Ibilbidea'), lab:b('Laboratorio','Laborategia'), ex:b('Ejercicios','Ariketak'), cards:b('Fichas','Txartelak'), sum:b('Resumen','Laburpena'),
+  yourPath:b('Tu ruta','Zure ibilbidea'), pathIntro:b('Cada unidad se apoya en la anterior: <b>lección</b> visual → <b>práctica</b> con preguntas nuevas cada vez. Con un 70 % se abre la siguiente y sus fichas pasan al repaso espaciado.','Unitate bakoitza aurrekoan oinarritzen da: <b>ikasgai</b> bisuala → <b>praktika</b>, aldi bakoitzean galdera berriekin. % 70ekin hurrengoa irekitzen da eta haren txartelak errepaso tartekatura pasatzen dira.'),
+  passed:(a,n)=>L(b(`${a} de ${n} unidades superadas`,`${n} unitatetik ${a} gaindituta`)),
+  locked:b('bloqueada','blokeatuta'), notStarted:b('sin empezar','hasi gabe'), best:b('mejor','onena'), next:b('siguiente','hurrengoa'),
+  openAll:b('Abrir todas las unidades','Unitate guztiak ireki'), back:b('← Ruta','← Ibilbidea'), unitN:(n,t)=>L(b(`Unidad ${n} de ${t}`,`${t}tik ${n}. unitatea`)),
+  lesson:b('1 · Lección','1 · Ikasgaia'), practice:b('2 · Práctica','2 · Praktika'), toPractice:b('Ir a la práctica →','Praktikara joan →'),
+  passedU:b('Unidad superada','Unitatea gaindituta'), openNext:n=>L(b(`Ya tienes abierta la unidad ${n}.`,`${n}. unitatea irekita duzu.`)),
+  finished:b('Has completado la ruta del tema. Sigue con los ejercicios y el laboratorio.','Gaiaren ibilbidea osatu duzu. Jarraitu ariketekin eta laborategiarekin.'),
+  goUnit:n=>L(b(`Ir a la unidad ${n} →`,`${n}. unitatera joan →`)), backPath:b('Volver a la ruta','Ibilbidera itzuli'),
+  notYet:b('Aún no','Oraindik ez'), need70:b('Necesitas un 70 % para pasar. Repasa la lección y vuelve a intentarlo: cada tanda genera preguntas nuevas.','% 70 behar duzu gainditzeko. Errepasatu ikasgaia eta saiatu berriro: sorta bakoitzak galdera berriak sortzen ditu.'),
+  review:b('Repasar la lección','Ikasgaia errepasatu'), practiceT:n=>L(b(`Práctica · unidad ${n}`,`Praktika · ${n}. unitatea`)),
+  exIntro:b('Ejercicios originales graduados, construidos con los patrones de los exámenes. Intenta resolverlos en papel; comprueba cada resultado; usa las pistas de una en una; mira la solución al final.','Ariketa original mailakatuak, azterketen ereduekin eginak. Saiatu paperean ebazten; egiaztatu emaitza bakoitza; erabili pistak banan-banan; begiratu ebazpena amaieran.'),
+  all:b('Todos','Denak'), solved:b('resueltos','ebatzita'), labsIntro:b('Manipula y observa: cada laboratorio calcula en directo con las mismas ecuaciones que usarás en el examen.','Manipulatu eta behatu: laborategi bakoitzak zuzenean kalkulatzen du azterketan erabiliko dituzun ekuazio berberekin.'),
+  vocab:b('Vocabulario ES ↔ EU','Hiztegia ES ↔ EU'),
+};
+const TABS=[['ruta',TX.ruta],['lab',TX.lab],['ex',TX.ex],['cards',TX.cards],['sum',TX.sum]];
+let tab=store.st.tab||'ruta', view={uid:null,step:'leccion'}, exFilter='all';
+const hm=location.hash.slice(1);
+if(TABS.some(t=>t[0]===hm)) tab=hm;
+else if(hm.startsWith('u=')){ const id=hm.slice(2); if(U.some(u=>u.id===id)){ tab='ruta'; view={uid:id,step:'leccion'}; } }
+
+/* ---- fichas: unidades abiertas + vocabulario ---- */
+function cards(){
+  const out=[];
+  U.forEach((u,ui)=>(u.cards||[]).forEach((c,i)=>out.push({key:u.id+'-'+i,deck:u.id,chip:['U'+(ui+1),meta.col],
+    front:()=>`<div class="cardq">${E.rich(c[0])}</div>`,
+    back:()=>`<div class="backtop"><div class="namebig" style="font-size:clamp(17px,3.2vw,22px)">${E.rich(c[0])}</div></div><div class="lesson" style="font-size:16.5px">${E.rich(c[1])}</div>`})));
+  (D.vocab||[]).forEach((v,i)=>out.push({key:'voc-'+i,deck:'voc',chip:[b('Hiztegia','Hiztegia'),meta.col],
+    front:()=>`<div class="cardq">${E.rich(E.lang()==='eu'?v[1]:v[0])}</div><div class="hintline">${L(b('¿Cómo se dice en euskera?','Nola esaten da gaztelaniaz?'))}</div>`,
+    back:()=>`<div class="backtop"><div class="namebig">${E.rich(E.lang()==='eu'?v[0]:v[1])}</div></div>${v[2]?`<div class="lesson" style="font-size:16px">${E.rich(v[2])}</div>`:''}`}));
+  return out;
+}
+const decks=()=>[...U.map((u,i)=>({k:u.id,n:'U'+(i+1)+' · '+L(u.short||u.title)})),...(D.vocab?[{k:'voc',n:TX.vocab}]:[])];
+const flash=E.flash({store,cards,decks:decks(),avail:id=>id==='voc'||unlocked(U.findIndex(u=>u.id===id))});
+
+/* ---- prácticas ---- */
+const quizzes={};
+function quizFor(u,i){
+  return quizzes[u.id]||(quizzes[u.id]=E.quiz({title:()=>TX.practiceT(i+1),build:u.quiz,
+    onFinish:r=>{ const s=store.st.units[u.id]||{best:0,tries:0}; s.tries++; s.best=Math.max(s.best,r.pct); if(r.pct>=70) s.done=true; store.st.units[u.id]=s; store.save(); },
+    extra:r=>{ const nxt=U[i+1];
+      return r.pct>=70
+        ? `<div class="callout c-key"><b class="t">${L(TX.passedU)}</b>${nxt?TX.openNext(i+2):L(TX.finished)}</div><div class="row">${nxt?`<button class="primary" data-a="t:go" data-v="${nxt.id}">${TX.goUnit(i+2)}</button>`:''}<button class="ghost" data-a="t:ruta">${L(TX.backPath)}</button></div>`
+        : `<div class="callout c-warn"><b class="t">${L(TX.notYet)}</b>${L(TX.need70)}</div><div class="row"><button class="ghost" data-a="t:step" data-v="leccion">${L(TX.review)}</button></div>`; }}));
+}
+
+$('#app').innerHTML=`<div id="hdr"></div><nav class="tabs" role="tablist" id="tabs"></nav><main id="view"></main>`;
+function hdr(){
+  $('#hdr').innerHTML=E.header({tile:meta.tile,sym:meta.sym,title:meta.title,sub:meta.sub,current:'topic'});
+  $('#tabs').innerHTML=TABS.map(([k,n])=>`<button role="tab" data-a="tab" data-v="${k}" aria-selected="${k===tab}">${L(n)}</button>`).join('');
+  document.title=L(meta.title)+' · Kimika';
+}
+
+/* ---------------- RUTA ---------------- */
+function renderRuta(v){
+  E.keys(null);
+  if(view.uid) return renderUnit(v);
+  const nd=U.filter(u=>done(u.id)).length, firstOpen=U.findIndex(u=>!done(u.id));
+  v.innerHTML=`<div class="rules">${D.intro?`<section class="panel lesson">${K.blocks(D.intro)}</section>`:''}
+    <section class="panel"><h2>${L(TX.yourPath)}</h2><p class="muted">${L(TX.pathIntro)}</p>
+    <div class="meter" aria-hidden="true"><i style="width:${nd/U.length*100}%;background:var(--ok)"></i></div>
+    <span class="count">${TX.passed(nd,U.length)}</span></section>
+    <div class="path">${U.map((u,i)=>{ const st=store.st.units[u.id], lk=!unlocked(i), dn=done(u.id);
+      return `<button class="unit${dn?' done':''}${lk?' locked':''}" ${lk?'disabled':''} data-a="t:go" data-v="${u.id}"><span class="num">${dn?'✓':i+1}</span>
+        <span><h3>${E.rich(u.title)}</h3><p>${E.rich(u.sub)}${!lk&&!dn&&i===firstOpen?` <span class="pill">${L(TX.next)}</span>`:''}</p></span>
+        <span class="score">${lk?L(TX.locked):st?L(TX.best)+' '+st.best+' %':L(TX.notStarted)}</span></button>`; }).join('')}</div>
+    ${store.st.open?'':`<div class="row"><button class="ghost" data-a="t:open">${L(TX.openAll)}</button></div>`}
+    ${E.resetBlock()}</div>`;
+  K.mountLabs(v);
+}
+function renderUnit(v){
+  const i=U.findIndex(u=>u.id===view.uid), u=U[i];
+  const head=`<div class="bar"><button class="ghost" data-a="t:ruta" style="min-height:40px;padding:8px 14px">${L(TX.back)}</button><span class="count">${TX.unitN(i+1,U.length)}</span></div>
+    <div class="seg steps-bar" role="group"><button data-a="t:step" data-v="leccion" aria-pressed="${view.step==='leccion'}">${L(TX.lesson)}</button><button data-a="t:step" data-v="practica" aria-pressed="${view.step==='practica'}">${L(TX.practice)}</button></div>`;
+  if(view.step==='leccion'){
+    v.innerHTML=`<div class="rules">${head}<section class="panel lesson"><h2>${E.rich(u.title)}</h2><p class="muted">${E.rich(u.sub)}</p>${K.blocks(u.blocks)}
+      <div class="row"><button class="primary" data-a="t:step" data-v="practica">${L(TX.toPractice)}</button></div></section></div>`;
+    E.keys(null); K.mountLabs(v);
+  } else {
+    v.innerHTML=`<div class="rules">${head}<div id="qhost"></div></div>`;
+    quizFor(u,i).render($('#qhost'));
+  }
+}
+E.act('t:go',id=>{ const i=U.findIndex(u=>u.id===id); if(i<0||!unlocked(i)) return; view={uid:id,step:'leccion'}; tab='ruta'; history.replaceState(null,'','#u='+id); render(); window.scrollTo(0,0); });
+E.act('t:ruta',()=>{ view={uid:null,step:'leccion'}; history.replaceState(null,'',location.pathname+location.search); render(); });
+E.act('t:step',s=>{ view.step=s; render(); window.scrollTo(0,0); });
+E.act('t:open',()=>{ store.st.open=true; store.save(); render(); });
+E.wireReset(store,()=>location.reload());
+
+/* ---------------- LABORATORIO ---------------- */
+function renderLab(v){
+  E.keys(null);
+  v.innerHTML=`<div class="rules"><section class="panel"><p class="muted" style="margin:0">${L(TX.labsIntro)}</p></section>
+    ${(D.labs||[]).map(([id,o,title])=>`<section class="panel">${title?`<h2>${E.rich(title)}</h2>`:''}${K.blocks([['lab',id,o]])}</section>`).join('')}</div>`;
+  K.mountLabs(v);
+}
+
+/* ---------------- EJERCICIOS ---------------- */
+const X=D.exercises||[];
+function exState(id){ return store.st.ex[id]||(store.st.ex[id]={}); }
+function renderEx(v){
+  E.keys(null);
+  const list=X.filter(x=>exFilter==='all'||String(x.lvl)===exFilter);
+  const nOk=X.filter(x=>store.st.ex[x.id]&&store.st.ex[x.id].ok).length;
+  v.innerHTML=`<div class="rules"><section class="panel"><p class="muted" style="margin-top:0">${L(TX.exIntro)}</p>
+    <p class="muted" style="margin:0">${L(K.T.original)}</p>
+    <div class="bar">${E.seg('t:xf',exFilter,[['all',TX.all],...K.T.lv.map((l,i)=>[String(i),l])])}<span class="count">${nOk}/${X.length} ${L(TX.solved)}</span></div></section>
+    ${list.map(x=>`<section class="panel">${K.exercise(x,store.st.ex[x.id])}</section>`).join('')}</div>`;
+  K.mountLabs(v);
+}
+function rerenderEx(id){ const x=X.find(y=>y.id===id), el=document.getElementById('x-'+id); if(!x||!el) return; el.outerHTML=K.exercise(x,store.st.ex[id]); }
+E.act('t:xf',f=>{ exFilter=f; render(); });
+E.act('k:hint',id=>{ const s=exState(id); s.h=(s.h||0)+1; store.save(); rerenderEx(id); });
+E.act('k:sol',id=>{ const s=exState(id); s.sol=!s.sol; store.save(); rerenderEx(id); });
+E.onSubmit('k:ans',f=>{ const id=f.dataset.x, i=+f.dataset.i, x=X.find(y=>y.id===id); if(!x) return;
+  const raw=f.querySelector('input').value, v=E.parseNum(raw); if(isNaN(v)){ f.querySelector('input').style.borderColor='var(--bad)'; return; }
+  const p=x.parts[i], s=exState(id); s.p=s.p||{}; s.p[i]={v:raw,ok:E.numOk(v,p)};
+  s.ok=x.parts.every((pp,j)=>s.p[j]&&s.p[j].ok); store.save(); rerenderEx(id); });
+
+/* ---------------- control ---------------- */
+function render(){
+  hdr();
+  const v=$('#view');
+  if(tab==='ruta') renderRuta(v);
+  else if(tab==='lab') renderLab(v);
+  else if(tab==='ex') renderEx(v);
+  else if(tab==='cards'){ flash.render(v); }
+  else { E.keys(null); v.innerHTML=`<div class="rules">${(D.summary||[]).map(sec=>`<section class="panel lesson">${K.blocks(sec)}</section>`).join('')}</div>`; K.mountLabs(v); }
+  const nd=U.filter(u=>done(u.id)).length;
+  $('#subtitle').textContent=`${meta.ref} · ${TX.passed(nd,U.length)}`;
+}
+E.act('tab',v=>{ if(v==='cards') flash.reset(); tab=v; store.st.tab=v; store.save(); if(v==='ruta'){ view={uid:null,step:'leccion'}; history.replaceState(null,'',location.pathname+location.search); } render(); window.scrollTo(0,0); });
+E.onLang(()=>render());
+addEventListener('hashchange',()=>{ const h=location.hash.slice(1);
+  if(TABS.some(t=>t[0]===h)){ tab=h; view={uid:null,step:'leccion'}; render(); }
+  else if(h.startsWith('u=')&&U.some(u=>u.id===h.slice(2))){ tab='ruta'; view={uid:h.slice(2),step:'leccion'}; render(); window.scrollTo(0,0); } });
+render();
+}
+if('serviceWorker' in navigator && location.protocol==='https:'){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
+})();
+</script>
+</body></html>
