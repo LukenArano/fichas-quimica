@@ -9,7 +9,7 @@
 <script src="kimika.js"></script>
 <script>
 /* temas con contenido disponible (se cargan para calcular el progreso) */
-const READY=['oinarriak','oreka','azidobase','pilak','elektrolisia','lv'];
+const READY=['oinarriak','oreka','azidobase','hauspeatzea','pilak','elektrolisia','lv'];
 (function(){ let n=READY.length; const go=()=>{ if(--n<=0) start(); }; if(!n) start(); READY.forEach(id=>{ const s=document.createElement('script'); s.src='t-'+id+'.js'; s.onload=go; s.onerror=go; document.body.appendChild(s); }); })();
 function start(){
 const E=Estudio, K=Kimika, L=E.L, b=E.b, $=E.$;
