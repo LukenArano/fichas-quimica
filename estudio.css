@@ -393,3 +393,4 @@ a.tile{text-decoration:none}
 .figrow{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; width:100%} .figrow svg{flex:1 1 260px; max-width:440px}
 .fig svg.flow{max-width:420px}
 .seg{flex-wrap:wrap; max-width:100%}
+.lab input[type=range]:disabled{opacity:.35; cursor:not-allowed}
