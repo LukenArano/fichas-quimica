@@ -12,7 +12,7 @@ const num=(x,d)=>E.num(x,d||3);
 const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';
 const ln=Math.log, log10=Math.log10;
 Lab.bisect=(f,lo,hi,n=200)=>{ let flo=f(lo); for(let i=0;i<n;i++){ const m=(lo+hi)/2, fm=f(m); if((fm<0)===(flo<0)){ lo=m; flo=fm; } else hi=m; } return (lo+hi)/2; };
-const slider=(id,label,min,max,step,v,unit)=>`<label>${L(label)} <span class="lv" id="${id}-v">${v}${unit?' '+unit:''}</span><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${v}"></label>`;
+const slider=(id,label,min,max,step,v,unit)=>`<label><span>${L(label)} <span class="lv" id="${id}-v">${v}${unit?' '+unit:''}</span></span><input type="range" id="${id}" min="${min}" max="${max}" step="${step}" value="${v}"></label>`;
 Lab.slider=slider;
 const sp=(c,f,ph)=>`${c>1?c+' ':''}{${f}}${ph?`<small>(${ph})</small>`:''}`;
 

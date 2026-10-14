@@ -39,7 +39,7 @@ const UI={
       questions:'Preguntas',of:'de',hits:'aciertos',result:'Resultado',pctHits:'Aciertos',toReview:'Para repasar',missed:'Lo que fallaste',
       noMiss:'Sin fallos. Buen trabajo.',another:'Otra tanda',
       resetQ:'Borrar progreso de este módulo…',resetSure:'Se borrará todo tu progreso aquí.',cancel:'Cancelar',del:'Borrar'},
-  eu:{knew:'Banekien',doubt:'Zalantza',didnt:'Ez nekien',again1:'berriz',soon:'laster',decks:'Sortak',smart:'Adimentsua',all:'Denak',
+  eu:{knew:'Banekien',doubt:'Zalantza izan dut',didnt:'Ez nekien',again1:'berriz',soon:'laster',decks:'Sortak',smart:'Adimentsua',all:'Denak',
       noDecks:'Ez dago sortarik hautatuta',chooseDecks:'Aukeratu sorta bat edo gehiago goian.',sessionDone:'Saioa amaituta',upToDate:'Dena egunean',
       leftNew:n=>`${n} txartel berri geratzen zaizkizu sorta hauetan.`,allSeen:'Sorta hauetako txartel guztiak ikusi dituzu.',nextRev:w=>`Hurrengo errepasoa: ${w}.`,
       learnN:n=>`${n} berri ikasi`,reviewAll:'Denak errepasatu hala ere',smartRev:'errepaso adimentsua',thinkFlip:'Pentsatu erantzuna · ukitu buelta emateko',
@@ -48,9 +48,9 @@ const UI={
       lv:{nueva:'berria',dominada:'menderatuta',repasando:'errepasatzen',aprendiendo:'ikasten'},
       inHours:'ordu batzuk barru',tomorrow:'bihar',inDays:d=>d===1?'egun 1 barru':`${d} egun barru`,
       check:'Egiaztatu',dunno:'Ez dakit',write:'Idatz dezakezu: 0,0013 · 1.3e-3 · 1,3x10^-3',yourAns:'Zure erantzuna',
-      right:'Zuzena',wrong:'Okerra',notQuite:'Ez guztiz',answer:'erantzuna',next:'Hurrengoa',seeResult:'Emaitza ikusi',
+      right:'Zuzena',wrong:'Okerra',notQuite:'Ez zehazki',answer:'erantzuna',next:'Hurrengoa',seeResult:'Emaitza ikusi',
       questions:'Galderak',of:'/',hits:'asmatuta',result:'Emaitza',pctHits:'Asmatuak',toReview:'Errepasatzeko',missed:'Huts egin dituzunak',
-      noMiss:'Hutsik gabe. Lan bikaina.',another:'Beste sorta bat',
+      noMiss:'Hutsik gabe. Lan bikaina.',another:'Beste txanda bat',
       resetQ:'Modulu honetako aurrerapena ezabatu…',resetSure:'Hemengo aurrerapen guztia ezabatuko da.',cancel:'Utzi',del:'Ezabatu'}
 };
 E.UI=UI;
@@ -63,7 +63,7 @@ E.chem = s=>String(s)
   .replace(/_([A-Za-zÀ-ÿ]+)/g,'<sub>$1</sub>')
   .replace(/\^\(([^)]+)\)/g,'<sup>$1</sup>')
   .replace(/\^([+\-−]?\d*[+\-−]?)/g,(m,c)=>c?'<sup>'+c.replace(/-/g,'−')+'</sup>':m);
-E.rich = t=>{ t=E.L(t); return t==null?'':String(t).replace(/\{([^{}]+)\}/g,(_,f)=>'<span class="fx">'+E.chem(f)+'</span>')
+E.rich = t=>{ t=E.L(t); return t==null?'':String(t).replace(/<(?!\/?(?:b|i|u|s|em|strong|small|sub|sup|span|div|p|br|wbr|hr|a|abbr|ol|ul|li|table|thead|tbody|tr|td|th|h[1-6]|svg|g|path|rect|text|tspan|line|circle|ellipse|polygon|polyline|defs|marker|pattern|figure|figcaption|details|summary|code|pre|button|label|input|select|option|section|article|form|img|mark|kbd)\b)/gi,'&lt;').replace(/\{([^{}]+)\}/g,(_,f)=>'<span class="fx">'+E.chem(f)+'</span>')
   .replace(/\b(p?K)_([a-zA-Z]+\d?)/g,'$1<sub>$2</sub>')
   .replace(/×10\^(-?\d+)/g,(m,e)=>'×10<sup>'+e.replace('-','−')+'</sup>'); };
 

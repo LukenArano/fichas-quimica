@@ -1,7 +1,7 @@
 // Modo sin conexión: guarda la app y las tipografías la primera vez que se abre.
-const CACHE = 'kimika-v3';
+const CACHE = 'kimika-v5';
 const CORE = ['./', './index.html', './formulacion.html', './tema.html', './azterketak.html', './acido-base.html', './equilibrio.html',
-  './estudio.css', './estudio.js', './kimika.js', './lab.js', './t-oreka.js', './az-data.js', './az-sol.js', './zuzenketak.js', './ab-data.js', './eq-data.js',
+  './estudio.css', './estudio.js', './kimika.js', './lab.js', './t-oreka.js', './az-data.js', './az-sol.js', './zuzenketak.js', './az-sol-lv.js', './lab-lv.js', './t-lv.js', './az-sol-azidobase.js', './lab-azidobase.js', './t-azidobase.js', './ab-data.js', './eq-data.js',
   './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
