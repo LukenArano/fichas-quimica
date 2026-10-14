@@ -59,8 +59,8 @@ Lab.def('valoracion',(host,o)=>{
  const TX={
   acidType:b('Azido mota','Tipo de ácido'),strong:b('Sendoa (HCl)','Fuerte (HCl)'),weak:b('Ahula (HAc)','Débil (HAc)'),
   ca:b('Azidoaren hasierako kontzentrazioa','Concentración inicial del ácido'),va:b('Azidoaren bolumena','Volumen de ácido'),cb:b('NaOH-ren kontzentrazioa','Concentración de NaOH'),vb:b('Gehitutako NaOH bolumena','Volumen de NaOH añadido'),pka:b('pKa azido ahularentzat','pKa para ácido débil'),
-  pH:b('pH','pH'),eq:b('Baliokidetasuna','Equivalencia'),eqShort:b('Baliok.','Equiv.'),buffer:b('Buffer-eremua','Zona tampón'),excess:b('Base soberakina','Exceso de base'),acid:b('Azido soberakina','Exceso de ácido'),sig:b('Erreakzio esanguratsua','Reacción significativa'),
-  sigAcid:b('Azido ahularen disoziazioa: HA ⇌ H⁺ + A⁻; baliokidetasun aurretik HA/A⁻ buffer-parea dago.','Disociación del ácido débil: HA ⇌ H⁺ + A⁻; antes de equivalencia coexiste el tampón HA/A⁻.'),
+  pH:b('pH','pH'),eq:b('Baliokidetasuna','Equivalencia'),eqShort:b('Baliok.','Equiv.'),buffer:b('Eremu indargetzailea','Zona tampón'),excess:b('Base soberakina','Exceso de base'),acid:b('Azido soberakina','Exceso de ácido'),sig:b('Erreakzio esanguratsua','Reacción significativa'),
+  sigAcid:b('Azido ahularen disoziazioa: HA ⇌ H⁺ + A⁻; baliokidetasun aurretik HA/A⁻ bikote indargetzailea dago.','Disociación del ácido débil: HA ⇌ H⁺ + A⁻; antes de equivalencia coexiste el tampón HA/A⁻.'),
   sigStrong:b('H₃O⁺ + OH⁻ → 2H₂O kuantitatiboa; azido soberan dago.','H₃O⁺ + OH⁻ → 2H₂O cuantitativa; queda ácido en exceso.'),
   sigEq:b('Baliokidetasunean azidoa neutralizatu da; azido ahularen gatza bada, A⁻-ren hidrolisiak pH-a finkatzen du.','En equivalencia se ha neutralizado el ácido; si era débil, la hidrólisis de A⁻ fija el pH.'),
   sig0w:b('Oraindik ez da NaOH-rik gehitu: azido ahularen disoziazio partziala da erreakzio esanguratsua (HA ⇌ H⁺ + A⁻, K<sub>a</sub>).','Aún no se ha añadido NaOH: la reacción significativa es la disociación parcial del ácido débil (HA ⇌ H⁺ + A⁻, K<sub>a</sub>).'),
